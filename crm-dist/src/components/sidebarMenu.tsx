@@ -33,7 +33,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ onToggle }) => {
             {/* Navigation */}
             <nav className="flex flex-col ml-2 flex-1 space-y-6">
                 <a
-                    href="#"
+                    href="/home"
                     className="flex items-center p-2 mt-4 text-gray-700 transition-colors duration-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-800 hover:bg-gray-100"
                 >
                     <svg
@@ -54,7 +54,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ onToggle }) => {
                 </a>
 
                 <a
-                    href="#"
+                    href="/estatics"
                     className="flex items-center p-2 text-gray-700 transition-colors duration-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-800 hover:bg-gray-100"
                 >
                     <svg
@@ -75,7 +75,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ onToggle }) => {
                 </a>
 
                 <a
-                    href="#"
+                    href="/questions"
                     className="flex items-center p-2 text-gray-700 transition-colors duration-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-800 hover:bg-gray-100">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

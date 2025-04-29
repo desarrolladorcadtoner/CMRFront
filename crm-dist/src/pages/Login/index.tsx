@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { Button } from "primereact/button";
 import { Chips, ChipsChangeEvent } from "primereact/chips";
 import { FloatLabel } from "primereact/floatlabel";
@@ -7,6 +8,12 @@ import { FloatLabel } from "primereact/floatlabel";
 export default function Login() {
   const [value, setValue] = useState<string[]>([]);
   const [password, setPassword] = useState<string>("");
+  const router = useRouter(); // Inicializa useRouter
+
+  const handleLogin = () => {
+    // Lógica para redirigir a /home
+    router.push("/home");
+  };
 
   return (
     <>
@@ -56,7 +63,7 @@ export default function Login() {
               <label htmlFor="username">Password</label>
             </FloatLabel>
             <a href="/home" className="ml-24 mb-6 text-xs text-cyan-400 underline">Olvidaste tu contraseña?</a>
-            <Button label="Submit" />
+            <Button label="Login" onClick={handleLogin}/>
           </div>
         </div>
       </div>

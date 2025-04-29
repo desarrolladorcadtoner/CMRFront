@@ -159,7 +159,7 @@ export default function Login() {
       <SidebarMenu onToggle={handleSidebarToggle} />
 
       {/* Contenido principal */}
-      <div className={`flex-1 transition-all duration-300 ${isSidebarExpanded ? 'ml-48' : 'ml-16'
+      <div className={`flex-1 bg-cyan-50 min-h-screen transition-all duration-300 ${isSidebarExpanded ? 'ml-48' : 'ml-16'
         }`}>
         {/* Header */}
         <header className="m-8">
@@ -171,7 +171,7 @@ export default function Login() {
           {/* Fila de módulos */}
           <div className="grid grid-cols-2 gap-4">
             {/* Módulo A */}
-            <div className="ModuloA h-64 bg-white shadow-md rounded-lg p-4 overflow-scroll">
+            <div className="ModuloA h-64 bg-white shadow-md rounded-lg p-4 overflow-y-scroll">
               <h2 className="text-xl font-semibold mb-4">Gestión de Productos</h2>
               <DataTable value={products} tableStyle={{ minWidth: '20rem' }}>
                 <Column field="code" header="Code"></Column>
