@@ -1,28 +1,35 @@
-export const login = async (username: string, password: string) => {
+export const login = async (usuario: string, password: string) => {
     const API_URL = "http://172.100.203.36:8001/login/login";
 
     try {
         const response = await fetch(API_URL, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json", // Asegúrate de incluir este encabezado
+                "Content-Type": "application/json",
             },
-            body: JSON.stringify({ username, password }), // Envía los datos en el formato correcto
+            body: JSON.stringify({ usuario, password }),
         });
 
         if (!response.ok) {
             const errorData = await response.json();
-            console.error("Error del servidor:", errorData); // Muestra el error del servidor
+            console.error("Error del servidor:", errorData);
             throw new Error(errorData.message || "Error al iniciar sesión");
         }
 
         const data = await response.json();
+        console.log("Token recibido:", data.token); // Verifica el token recibido
 
-        // Guardar el token en una cookie HttpOnly (esto debe hacerse desde el servidor)
-        document.cookie = `token=${data.token}; HttpOnly; Secure; SameSite=Strict;`;
+        // Guardar el token en una cookie (esto debe hacerse desde el servidor para HttpOnly)
+        document.cookie = `token=${data.token}; Secure; SameSite=Strict;`;
 
         return data;
     } catch (error: any) {
         throw new Error(error.message || "Error al iniciar sesión");
     }
+};
+
+export const logout = () => {
+    // Eliminar el token de las cookies
+    document.cookie = "token=; Max-Age=0; path=/; Secure; SameSite=Strict;";
+    console.log("Sesión cerrada. Token eliminado.");
 };

@@ -7,26 +7,29 @@ import { FloatLabel } from "primereact/floatlabel";
 import { login } from "@/api/auth";
 
 export default function Login() {
-  const [username, setUsername] = useState<string>(""); // Cambiar a string
+  const [usuario, setUsuario] = useState<string>(""); // Cambiar a string
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleLogin = async () => {
-    if (!username || !password) {
+    if (!usuario || !password) {
       setError("Por favor, ingresa tu usuario y contraseña.");
       return;
     }
 
     try {
       setError(null); // Limpiar errores previos
-      console.log("Enviando datos:", { username, password }); // Verifica los datos enviados
-      const response = await login(username, password);
-      console.log("Respuesta del servidor:", response); // Verifica la respuesta del servidor
-      router.push("/home"); // Redirigir al home
+      console.log("Enviando datos:", { usuario, password });
+      const response = await login(usuario, password);
+      console.log("Respuesta del servidor:", response);
+
+      // Redirigir al home
+      console.log("Redirigiendo a /home...");
+      router.push("/home");
     } catch (err: any) {
-      console.error("Error al iniciar sesión:", err); // Verifica el error
-      setError(err.message); // Mostrar error al usuario
+      console.error("Error al iniciar sesión:", err);
+      setError(err.message);
     }
   };
 
@@ -60,12 +63,12 @@ export default function Login() {
             <h1 className="mb-8 text-3xl">USER LOGIN</h1>
             {error && <p className="text-red-500 mb-6">{error}</p>}
             <div className="inputs flex flex-col h-56">
-              <label htmlFor="username" className="mb-2">Username</label>
+              <label htmlFor="usuario" className="mb-2">Usuario</label>
               <input
-                id="username"
-                value={username}
+                id="usuario"
+                value={usuario}
                 placeholder="Usuario"
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => setUsuario(e.target.value)}
                 className="p-inputtext p-component w-[250px]"
               />
 
