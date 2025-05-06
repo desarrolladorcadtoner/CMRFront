@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from "next/router";
+import { isAuthenticated } from "@/utils/auth";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import SidebarMenu from "@/components/sidebarMenu";
@@ -21,6 +23,13 @@ export default function Login() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [items] = useState<string[]>(Array.from({ length: 100 }).map((_, i) => `Item #${i}`));
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push("/login"); // Redirigir al login si no está autenticado
+    }
+  }, []);
 
   const handleSidebarToggle = (isExpanded: boolean) => {
     setIsSidebarExpanded(isExpanded);

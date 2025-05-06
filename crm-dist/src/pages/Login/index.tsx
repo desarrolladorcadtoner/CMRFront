@@ -4,21 +4,35 @@ import { useRouter } from "next/router";
 import { Button } from "primereact/button";
 import { Chips, ChipsChangeEvent } from "primereact/chips";
 import { FloatLabel } from "primereact/floatlabel";
+import { login } from "@/api/auth";
 
 export default function Login() {
-  const [value, setValue] = useState<string[]>([]);
+  const [username, setUsername] = useState<string>(""); // Cambiar a string
   const [password, setPassword] = useState<string>("");
-  const router = useRouter(); // Inicializa useRouter
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleLogin = () => {
-    // Lógica para redirigir a /home
-    router.push("/home");
+  const handleLogin = async () => {
+    if (!username || !password) {
+      setError("Por favor, ingresa tu usuario y contraseña.");
+      return;
+    }
+
+    try {
+      setError(null); // Limpiar errores previos
+      console.log("Enviando datos:", { username, password }); // Verifica los datos enviados
+      const response = await login(username, password);
+      console.log("Respuesta del servidor:", response); // Verifica la respuesta del servidor
+      router.push("/home"); // Redirigir al home
+    } catch (err: any) {
+      console.error("Error al iniciar sesión:", err); // Verifica el error
+      setError(err.message); // Mostrar error al usuario
+    }
   };
 
   return (
     <>
       {/* Div background con posición absoluta */}
-
 
       <div className="container min-w-screen min-h-screen flexjustify-center items-center bg-gradient-to-br from-[#0b4468] to-[#0072b1] 
         flex flex-col justify-center items-center">
@@ -44,26 +58,31 @@ export default function Login() {
 
           <div className="formLogin w-[400px] h-full flex flex-col justify-center items-center">
             <h1 className="mb-8 text-3xl">USER LOGIN</h1>
-            <FloatLabel className="mb-4">
-              <Chips
+            {error && <p className="text-red-500 mb-6">{error}</p>}
+            <div className="inputs flex flex-col h-56">
+              <label htmlFor="username" className="mb-2">Username</label>
+              <input
                 id="username"
-                value={value}
-                onChange={(e: ChipsChangeEvent) => setValue(e.value || [])}         
-                />
-              <label htmlFor="username" >Username</label>
-            </FloatLabel>
-            <FloatLabel className="mb-4 mt-6">
+                value={username}
+                placeholder="Usuario"
+                onChange={(e) => setUsername(e.target.value)}
+                className="p-inputtext p-component w-[250px]"
+              />
+
+              <label htmlFor="password" className="mb-2 mt-6">Password</label>
               <input
                 id="Password"
                 type="password"
+                placeholder="Contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="p-inputtext p-component w-full"
+                className="p-inputtext p-component w-[250px]"
               />
-              <label htmlFor="username">Password</label>
-            </FloatLabel>
-            <a href="/home" className="ml-24 mb-6 text-xs text-cyan-400 underline">Olvidaste tu contraseña?</a>
-            <Button label="Login" onClick={handleLogin}/>
+              <a href="/home" className="ml-24 text-xs text-cyan-400 underline">Olvidaste tu contraseña?</a>
+            </div>
+            
+            
+            <Button label="Login" onClick={handleLogin} />
           </div>
         </div>
       </div>
