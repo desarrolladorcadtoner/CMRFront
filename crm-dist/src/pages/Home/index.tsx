@@ -170,7 +170,7 @@ export default function Login() {
       <SidebarMenu onToggle={handleSidebarToggle} />
 
       {/* Contenido principal */}
-      <div className={`flex-1 cccccc min-h-screen transition-all duration-300 ${isSidebarExpanded ? 'ml-48' : 'ml-16'
+      <div className={`flex-1 min-h-screen transition-all duration-300 ${isSidebarExpanded ? 'ml-48' : 'ml-16'
         }`}>
         {/* Header */}
         <header className="m-8">

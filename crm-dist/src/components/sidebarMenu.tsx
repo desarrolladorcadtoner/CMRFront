@@ -86,7 +86,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ onToggle }) => {
                 </a>
 
                 <a
-                    href="/home"
+                    href="/validateDistribuidor"
                     className="flex items-center p-2 text-gray-700 transition-colors duration-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-800 hover:bg-gray-100">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

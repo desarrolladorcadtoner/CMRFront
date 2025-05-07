@@ -1,0 +1,7 @@
+.p-tabview-nav, .p-tabview-panels, .p-tabview-nav-link{
+    background-color: #DBEAFE;
+}
+
+.p-datatable, .p-component, .p-datatable-responsive-scroll, .p-datatable-striped{
+    border-radius: 30px;
+}
