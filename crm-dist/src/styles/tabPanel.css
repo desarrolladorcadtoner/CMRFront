@@ -5,3 +5,11 @@
 .p-datatable, .p-component, .p-datatable-responsive-scroll, .p-datatable-striped{
     border-radius: 30px;
 }
+
+
+/*.p-tabview-nav-link {
+    border: 2px solid;
+    border-color: #de1c85;
+    border-bottom: none;
+    border-right: none;
+}*/
