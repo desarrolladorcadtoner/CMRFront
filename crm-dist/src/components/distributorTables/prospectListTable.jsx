@@ -2,7 +2,7 @@ import React from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
-const ProspectListTable = () => {
+const ProspectListTable = ({ onViewDetails }) => {
     return (
         <>
             <DataTable
@@ -18,8 +18,10 @@ const ProspectListTable = () => {
                 <Column
                     field="Acción"
                     header="Acción"
-                    body={() => (
-                        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    body={(rowData) => (
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                            onClick={() => onViewDetails(rowData)}                        
+                        >
                             Ver Detalles
                         </button>
                     )}
