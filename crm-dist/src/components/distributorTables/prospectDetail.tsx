@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
+import { Tooltip } from 'primereact/tooltip';
 
 interface DistribuidorData {
     RegisterSOne: any;
@@ -16,7 +17,13 @@ interface FieldProps {
 const Field: React.FC<FieldProps> = ({ label, value }) => (
     <div className="flex items-center gap-4">
         <p className="font-semibold whitespace-nowrap">{label}:</p>
-        <InputText value={value} disabled className="w-48" />
+        <InputText
+            value={value}
+            className="w-48"
+            tooltip={value}
+            tooltipOptions={{ position: 'mouse' }}
+        />
+        <Tooltip target=".p-inputtext" /> {/* Aplica el tooltip a todos los inputs */}
     </div>
 );
 
@@ -25,6 +32,15 @@ interface SectionProps {
     fields: FieldProps[];
 }
 
+/**
+ * Un componente funcional de React que renderiza una sección con un título y una lista de campos.
+ *
+ * @param {SectionProps} props - Las propiedades para el componente Section.
+ * @param {string} props.title - El título de la sección que se mostrará.
+ * @param {Array<FieldProps>} props.fields - Un arreglo de objetos de campo que se renderizarán dentro de la sección.
+ *
+ * @returns {JSX.Element} Un elemento JSX que representa la sección con un título y campos.
+ */
 const Section: React.FC<SectionProps> = ({ title, fields }) => (
     <div className="mb-8">
         <h2 className="text-2xl mb-4">{title}</h2>
@@ -36,13 +52,13 @@ const Section: React.FC<SectionProps> = ({ title, fields }) => (
     </div>
 );
 
-const ProspectDetail: React.FC = () => {
+const ProspectDetail: React.FC<{ idDistribuidor: number }> = ({ idDistribuidor }) => {
     const [data, setData] = useState<DistribuidorData | null>(null);
     const [documentsDownloaded, setDocumentsDownloaded] = useState(false); // Estado para controlar si los documentos se descargaron
 
     const downloadDocuments = async () => {
         try {
-            const response = await fetch('http://172.100.203.36:8001/register/documentos/1');
+            const response = await fetch(`http://172.100.203.36:8001/register/documentos/${idDistribuidor}`);
             if (!response.ok) {
                 throw new Error('Error al descargar los documentos');
             }
@@ -90,7 +106,10 @@ const ProspectDetail: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://172.100.203.36:8001/register/distribuidor/3');
+                const response = await fetch(`http://172.100.203.36:8001/register/distribuidor/${idDistribuidor}`);
+                if (!response.ok) {
+                    throw new Error('Error al obtener los detalles del prospecto');
+                }
                 const result = await response.json();
                 setData(result);
             } catch (error) {
@@ -99,7 +118,7 @@ const ProspectDetail: React.FC = () => {
         };
 
         fetchData();
-    }, []);
+    }, [idDistribuidor]);
 
     if (!data) return <p>Cargando...</p>;
 
@@ -113,7 +132,7 @@ const ProspectDetail: React.FC = () => {
             <Section
                 title="Información Fiscal"
                 fields={[
-                    { label: 'Tipo Persona', value: RegisterSOne.TipoPersona },
+                    { label: 'Tipo Persona', value: RegisterSOne.RazonSocial },
                     { label: 'Razón Social', value: RegisterSOne.RazonSocial },
                     { label: 'Nombre Comercial', value: RegisterSOne.NombreComercial },
                     { label: 'RFC', value: RegisterSOne.RFC },
@@ -205,7 +224,7 @@ const ProspectDetail: React.FC = () => {
                     label="Aceptar Solicitud"
                     severity="success"
                     disabled={!documentsDownloaded} // Deshabilitado hasta que se descarguen los documentos
-                    onClick={() => confirmAction(1, 'aceptar')} // Llamar a la función con el ID y la acción
+                    onClick={() => confirmAction(idDistribuidor, 'aceptar')} // Llamar a la función con el ID y la acción
                 />
                 <Button
                     label="Denegar Solicitud"

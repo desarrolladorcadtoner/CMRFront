@@ -13,6 +13,7 @@ export default function Login() {
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0); // Controla el TabPanel activo
     const [isDetailEnabled, setIsDetailEnabled] = useState(false); // Controla si "Detail" está habilitado
+    const [selectedIdDistribuidor, setSelectedIdDistribuidor] = useState<number | null>(null);
 
     const router = useRouter();
 
@@ -34,10 +35,11 @@ export default function Login() {
         [key: string]: any; // Add additional fields as needed
     }
 
-    const handleViewDetails = (rowData: ProspectRowData): void => {
-        console.log("Detalles del prospecto:", rowData); // Puedes usar esta información si es necesario
+    const handleViewDetails = (idDistribuidor: number): void => {
+        console.log("Detalles del prospecto:", idDistribuidor); // Puedes usar esta información si es necesario
+        setSelectedIdDistribuidor(idDistribuidor); // Actualiza el estado con el ID seleccionado
         setIsDetailEnabled(true); // Habilita el TabPanel "Detail"
-        setActiveIndex(1); // Cambia al TabPanel "Detail"
+        setActiveIndex(1); // Cambia al TabPanel "Detail
     };
 
     interface TabChangeEvent {
@@ -65,7 +67,7 @@ export default function Login() {
                             <ProspectListTable onViewDetails={handleViewDetails} />
                         </TabPanel>
                         <TabPanel header="Detail" disabled={!isDetailEnabled}>
-                            <ProspectDetail />
+                            <ProspectDetail idDistribuidor={selectedIdDistribuidor || 0} />
                         </TabPanel>
                         <TabPanel header="Prospectos Aceptados">
                             <AcceptedProspectsTable/>                            
