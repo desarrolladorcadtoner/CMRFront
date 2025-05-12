@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { isAuthenticated } from "@/utils/auth";
 import { useRouter } from "next/router";
 import { TabView, TabPanel } from 'primereact/tabview';
-
-import { Dialog } from 'primereact/dialog';
 import { ProspectDetail, ProspectListTable, AcceptedProspectsTable, DeclinedProspectsTable } from '@/components/distributorTables/'
 import SidebarMenu from "@/components/sidebarMenu";
 import '@/styles/tabPanel.css'

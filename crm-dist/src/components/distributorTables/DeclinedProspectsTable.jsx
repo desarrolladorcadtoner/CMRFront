@@ -22,20 +22,20 @@ const declinedProspectsTable = () => {
             <h1 className="text-xl mb-4">Información de Prospectos Declinados</h1>
             <DataTable
                 value={[
-                    { Nombre: 'Carlos Gómez', Correo: 'carlos.gomez@example.com', Teléfono: '5551234567', Motivo: 'No cumple con los requisitos.' },
-                    { Nombre: 'María Torres', Correo: 'maria.torres@example.com', Teléfono: '5559876543', Motivo: 'Documentación incompleta.' },
+                    { TipoPersona: 'Fisica', RazonSocial: 'Carlos Gómez', CorreoFact: 'carlos.gomez@example.com', Telefono: '5551234567', Motivo: 'No cumple con los requisitos.' },
+                    { TipoPersona: 'Moral', RazonSocial: 'La Tintoreria', CorreoFact: 'maria.torres@example.com', Telefono: '5559876543', Motivo: 'Documentación incompleta.' },
                 ]}
                 stripedRows
                 tableStyle={{
                     minWidth: '50rem',
-                    borderRadius: '1rem', // Bordes redondeados
                     border: '1px solid #d1d5db', // Borde gris claro
-                    opacity: 0.8, // Apariencia deshabilitada
+                    opacity: 0.7, // Apariencia deshabilitada
                 }}
             >
-                <Column field="Nombre" header="Nombre"></Column>
-                <Column field="Correo" header="Correo"></Column>
-                <Column field="Teléfono" header="Teléfono"></Column>
+                <Column field="TipoPersona" header="Tipo Persona"></Column>
+                <Column field="RazonSocial" header="Razon Social"></Column>
+                <Column field="CorreoFact" header="Correo"></Column>
+                <Column field="Telefono" header="Teléfono"></Column>
                 <Column
                     header="Acción"
                     body={(rowData) => (

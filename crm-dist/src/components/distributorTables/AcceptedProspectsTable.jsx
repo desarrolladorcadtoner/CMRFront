@@ -8,29 +8,19 @@ const acceptedProspectsTable = () => {
             <h1 className="text-xl mb-4">Información de Prospectos Aceptados</h1>
             <DataTable
                 value={[
-                    { Nombre: 'Juan Pérez', Correo: 'juan.perez@example.com', Teléfono: '5551234567' },
-                    { Nombre: 'Ana López', Correo: 'ana.lopez@example.com', Teléfono: '5559876543' },
+                    { TipoPersona: 'Fisica', RazonSocial: 'Juan Perez', CorreoFact: 'juan.perez@example.com', Telefono: '5551234567' },
+                    { TipoPersona: 'Moral', RazonSocial: 'Piezas Raul', CorreoFact: 'contacto@piezasraul.com', Telefono: '4448951263' },
                 ]}
                 stripedRows
                 tableStyle={{ minWidth: '50rem' }}
             >
-                <Column field="Nombre" header="Nombre"></Column>
-                <Column field="Correo" header="Correo"></Column>
-                <Column field="Teléfono" header="Teléfono"></Column>
-                <Column
-                    header="Acción"
-                    body={() => (
-                        <a
-                            href="#"
-                            className="text-blue-500 underline hover:text-blue-700"
-                        >
-                            Ver Información
-                        </a>
-                    )}
-                ></Column>
+                <Column field="TipoPersona" header="Tipo Persona"></Column>
+                <Column field="RazonSocial" header="Razon Social"></Column>
+                <Column field="CorreoFact" header="Correo"></Column>
+                <Column field="Telefono" header="Teléfono"></Column>
             </DataTable>
         </>
-        
+
     );
 };
 
