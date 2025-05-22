@@ -21,10 +21,10 @@ export default function Login() {
       setError(null); // Limpiar errores previos
       //console.log("Enviando datos:", { usuario, password });
       const response = await login(usuario, password);
-      //console.log("Respuesta del servidor:", response);
+      console.log("Respuesta del servidor:", response);
 
       // Redirigir al home
-      //console.log("Redirigiendo a /home...");
+      console.log("Redirigiendo a /home...");
       router.push("/home");
     } catch (err: any) {
       console.error("Error al iniciar sesión:", err);
@@ -80,7 +80,7 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="p-inputtext p-component w-[250px]"
               />
-              <a href="/home" className="ml-24 text-xs text-cyan-400 underline">Olvidaste tu contraseña?</a>
+              <a href="/forgottenPassword" className="ml-24 text-xs text-cyan-400 underline">Olvidaste tu contraseña?</a>
             </div>
             
             

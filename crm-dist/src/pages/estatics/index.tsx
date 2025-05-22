@@ -8,6 +8,7 @@ export default function Statistics() {
   const router = useRouter();
 
   useEffect(() => {
+    //router.push("/login"); 
     if (!isAuthenticated()) {
       router.push("/login"); // Redirigir al login si no está autenticado
     }

@@ -17,7 +17,7 @@ export const login = async (usuario: string, password: string) => {
         }
 
         const data = await response.json();
-        console.log("Token recibido:", data.token); // Verifica el token recibido
+        console.log("Respuesta:", data.token); // Verifica el token recibido
 
         // Guardar el token en una cookie (esto debe hacerse desde el servidor para HttpOnly)
         document.cookie = `token=${data.token}; Secure; SameSite=Strict;`;
@@ -26,6 +26,7 @@ export const login = async (usuario: string, password: string) => {
     } catch (error: any) {
         throw new Error(error.message || "Error al iniciar sesión");
     }
+
 };
 
 export const logout = () => {

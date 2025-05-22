@@ -26,6 +26,7 @@ export default function Login() {
   const router = useRouter();
 
   useEffect(() => {
+    console.log(isAuthenticated);
     if (!isAuthenticated()) {
       router.push("/login"); // Redirigir al login si no está autenticado
     }

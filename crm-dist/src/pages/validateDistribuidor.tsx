@@ -16,6 +16,7 @@ export default function Login() {
     const router = useRouter();
 
     useEffect(() => {
+        console.log(isAuthenticated);
         if (!isAuthenticated()) {
             router.push("/login"); // Redirigir al login si no está autenticado
         }
@@ -51,7 +52,7 @@ export default function Login() {
             setIsDetailEnabled(false); // Deshabilita "Detail" si se selecciona otro TabPanel
         }
     };
-    
+
 
     return (
         <>
@@ -68,10 +69,10 @@ export default function Login() {
                             <ProspectDetail idDistribuidor={selectedIdDistribuidor || 0} />
                         </TabPanel>
                         <TabPanel header="Prospectos Aceptados">
-                            <AcceptedProspectsTable/>                            
+                            <AcceptedProspectsTable />
                         </TabPanel>
                         <TabPanel header="Prospectos Declinados">
-                            <DeclinedProspectsTable/>
+                            <DeclinedProspectsTable />
                         </TabPanel>
 
                     </TabView>
