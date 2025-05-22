@@ -19,12 +19,12 @@ export default function Login() {
 
     try {
       setError(null); // Limpiar errores previos
-      console.log("Enviando datos:", { usuario, password });
+      //console.log("Enviando datos:", { usuario, password });
       const response = await login(usuario, password);
-      console.log("Respuesta del servidor:", response);
+      //console.log("Respuesta del servidor:", response);
 
       // Redirigir al home
-      console.log("Redirigiendo a /home...");
+      //console.log("Redirigiendo a /home...");
       router.push("/home");
     } catch (err: any) {
       console.error("Error al iniciar sesión:", err);
@@ -84,7 +84,7 @@ export default function Login() {
             </div>
             
             
-            <Button label="Login" onClick={handleLogin} />
+            <Button label="Login" onClick={handleLogin} /> {/*onClick={handleLogin}*/}
           </div>
         </div>
       </div>

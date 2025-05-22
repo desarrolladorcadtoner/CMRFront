@@ -29,6 +29,7 @@ export default function Login() {
     if (!isAuthenticated()) {
       router.push("/login"); // Redirigir al login si no está autenticado
     }
+    
   }, []);
 
   const handleSidebarToggle = (isExpanded: boolean) => {
