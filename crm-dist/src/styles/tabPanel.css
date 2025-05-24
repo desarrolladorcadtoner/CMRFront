@@ -6,6 +6,12 @@
     border-radius: 30px;
 }
 
+aside {
+    background: #0072b1 !important;
+    border: grey;
+    box-shadow: 2px 2px 12px rgb(131, 131, 131);
+}
+
 
 /*.p-tabview-nav-link {
     border: 2px solid;

@@ -1,4 +1,5 @@
 import "../styles/globals.css"; // Ajusta la ruta si es necesario
+import '@/styles/tabPanel.css'
 import { PrimeReactProvider, PrimeReactContext, AppendToType } from 'primereact/api';
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import 'primereact/resources/primereact.min.css'; // Estilos base de PrimeReact
