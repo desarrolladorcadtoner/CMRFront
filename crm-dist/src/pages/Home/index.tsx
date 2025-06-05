@@ -22,7 +22,7 @@ interface Product {
 export default function Login() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [items] = useState<string[]>(Array.from({ length: 100 }).map((_, i) => `Item #${i}`));
+  //const [items] = useState<string[]>(Array.from({ length: 100 }).map((_, i) => `Item #${i}`));
   const router = useRouter();
 
   useEffect(() => {

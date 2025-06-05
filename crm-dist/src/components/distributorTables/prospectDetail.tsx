@@ -64,14 +64,21 @@ const ProspectDetail: React.FC<{ idDistribuidor: number }> = ({ idDistribuidor }
             }
 
             const blob = await response.blob();
+
+            // Obtener filename desde el header Content-Disposition
+            const disposition = response.headers.get('Content-Disposition') || '';
+            const filenameMatch = disposition.match(/filename="?([^"]+)"?/);
+            const filename = filenameMatch ? filenameMatch[1] : 'documentos_distribuidor.zip';
+
+            // Crear el enlace de descarga
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'documentos_distribuidor_1.zip'; // Nombre del archivo
+            a.download = filename;
             a.click();
             window.URL.revokeObjectURL(url);
 
-            setDocumentsDownloaded(true); // Habilitar los botones de aceptar/denegar
+            setDocumentsDownloaded(true);
         } catch (error) {
             console.error('Error al descargar los documentos:', error);
         }
