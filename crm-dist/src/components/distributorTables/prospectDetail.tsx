@@ -59,25 +59,35 @@ const ProspectDetail: React.FC<{ idDistribuidor: number }> = ({ idDistribuidor }
     const downloadDocuments = async () => {
         try {
             const response = await fetch(`http://172.100.203.36:8001/register/documentos/${idDistribuidor}`);
+
             if (!response.ok) {
                 throw new Error('Error al descargar los documentos');
             }
 
             const blob = await response.blob();
 
-            // Obtener filename desde el header Content-Disposition
-            const disposition = response.headers.get('Content-Disposition') || '';
-            const filenameMatch = disposition.match(/filename="?([^"]+)"?/);
-            const filename = filenameMatch ? filenameMatch[1] : 'documentos_distribuidor.zip';
+            const disposition = response.headers.get('Content-Disposition');
+            let filename = 'documentos_distribuidor.zip'; // Nombre predeterminado
 
-            // Crear el enlace de descarga
+            if (disposition) {
+                const filenameMatch = disposition.match(/filename="([^"]+)"/);
+                filename = filenameMatch ? filenameMatch[1] : filename;
+            } else {
+                console.warn('Header Content-Disposition no encontrado.');
+            }
+
+
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = filename;
-            a.click();
-            window.URL.revokeObjectURL(url);
+            a.download = filename; // Asignar el nombre predeterminado
 
+            document.body.appendChild(a);
+            a.click();
+
+            document.body.removeChild(a);
+
+            window.URL.revokeObjectURL(url);
             setDocumentsDownloaded(true);
         } catch (error) {
             console.error('Error al descargar los documentos:', error);
