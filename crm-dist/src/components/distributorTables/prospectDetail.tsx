@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
+import { InputNumber } from 'primereact/inputnumber';
+import { SectionEditable } from './CamposProspectoInfo/SectionEditable';
 
 interface DistribuidorData {
     RegisterSOne: any;
@@ -55,6 +57,9 @@ const Section: React.FC<SectionProps> = ({ title, fields }) => (
 const ProspectDetail: React.FC<{ idDistribuidor: number }> = ({ idDistribuidor }) => {
     const [data, setData] = useState<DistribuidorData | null>(null);
     const [documentsDownloaded, setDocumentsDownloaded] = useState(false); // Estado para controlar si los documentos se descargaron
+    const [limiteCredito, setLimiteCredito] = useState<number>(0);
+    const [diasCredito, setDiasCredito] = useState<number>(0);
+    const [descuentoAutorizado, setDescuentoAutorizado] = useState<number>(0);
 
     const downloadDocuments = async () => {
         try {
@@ -224,6 +229,16 @@ const ProspectDetail: React.FC<{ idDistribuidor: number }> = ({ idDistribuidor }
                     { label: 'Código Postal', value: RegisterSThree.codigoPostalEntrega },
                     { label: 'Estado', value: RegisterSThree.estadoEntrega },
                     { label: 'Municipio', value: RegisterSThree.ciudadEntrega },
+                ]}
+            />
+
+            {/* Asignacion Detalle de credito */}
+            <SectionEditable
+                title="Asignación de Crédito / Descuentos"
+                fields={[
+                    { label: "Límite de crédito", value: limiteCredito, onChange: v => setLimiteCredito(v ?? 0), prefix: "$" },
+                    { label: "Días de crédito", value: diasCredito, onChange: v => setDiasCredito(v ?? 0) },
+                    { label: "Descuento Autorizado", value: descuentoAutorizado, onChange: v => setDescuentoAutorizado(v ?? 0), suffix: "%" },
                 ]}
             />
 

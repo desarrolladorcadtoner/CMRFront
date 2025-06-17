@@ -195,9 +195,9 @@ export default function Login() {
             </div>
 
             {/* Módulo B */}
-            <div className="ModuloB h-78  bg-white shadow-md rounded-lg p-4">
+            <div className="ModuloB h-auto bg-white shadow-md rounded-lg p-4">
               <h2 className="text-xl font-semibold mb-4">Estadísticas</h2>
-              <p>Aquí puedes agregar gráficos o estadísticas relacionadas con los productos.</p>
+              <p className='mb-4'>Aquí puedes agregar gráficos o estadísticas relacionadas con los productos.</p>
               <Accordion activeIndex={0}>
                 <AccordionTab header="Header I">
                   <p className="m-0">
