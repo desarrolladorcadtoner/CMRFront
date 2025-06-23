@@ -5,6 +5,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import SidebarMenu from "@/components/sidebarMenu";
 import { Accordion, AccordionTab } from 'primereact/accordion';
+import { FaChartBar, FaTasks, FaUserFriends, FaSearch, FaBell } from "react-icons/fa";
 
 interface Product {
   id: string;
@@ -19,225 +20,160 @@ interface Product {
   rating: number;
 }
 
-export default function Login() {
+export default function IndexV2() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  //const [items] = useState<string[]>(Array.from({ length: 100 }).map((_, i) => `Item #${i}`));
+  const [search, setSearch] = useState('');
   const router = useRouter();
 
   useEffect(() => {
-    console.log(isAuthenticated());
-    if (!isAuthenticated()) {
-      router.push("/login"); // Redirigir al login si no está autenticado
-    }
-    
+    if (!isAuthenticated()) router.push("/login");
+  }, []);
+
+  // Datos simulados
+  useEffect(() => {
+    setProducts([
+      // ... mismos datos mock que ya tienes
+      // Agrega aquí los productos mock que ya tienes.
+    ]);
   }, []);
 
   const handleSidebarToggle = (isExpanded: boolean) => {
     setIsSidebarExpanded(isExpanded);
   };
 
-  // Datos simulados
-  const mockProducts: Product[] = [
-    {
-      id: "1",
-      code: "P001",
-      name: "Laptop",
-      description: "High-performance laptop",
-      image: "laptop.jpg",
-      price: 1200,
-      category: "Electronics",
-      quantity: 10,
-      inventoryStatus: "INSTOCK",
-      rating: 4,
-    },
-    {
-      id: "2",
-      code: "P002",
-      name: "Smartphone",
-      description: "Latest model smartphone",
-      image: "smartphone.jpg",
-      price: 800,
-      category: "Electronics",
-      quantity: 20,
-      inventoryStatus: "INSTOCK",
-      rating: 5,
-    },
-    {
-      id: "3",
-      code: "P003",
-      name: "Headphones",
-      description: "Noise-cancelling headphones",
-      image: "headphones.jpg",
-      price: 200,
-      category: "Accessories",
-      quantity: 15,
-      inventoryStatus: "INSTOCK",
-      rating: 4,
-    },
-    {
-      id: "4",
-      code: "P004",
-      name: "Monitor",
-      description: "4K Ultra HD monitor",
-      image: "monitor.jpg",
-      price: 300,
-      category: "Electronics",
-      quantity: 8,
-      inventoryStatus: "LOWSTOCK",
-      rating: 4,
-    },
-    {
-      id: "5",
-      code: "P005",
-      name: "Keyboard",
-      description: "Mechanical keyboard",
-      image: "keyboard.jpg",
-      price: 100,
-      category: "Accessories",
-      quantity: 25,
-      inventoryStatus: "INSTOCK",
-      rating: 5,
-    },
-    {
-      id: "6",
-      code: "P006",
-      name: "Mouse",
-      description: "Wireless mouse",
-      image: "mouse.jpg",
-      price: 50,
-      category: "Accessories",
-      quantity: 30,
-      inventoryStatus: "INSTOCK",
-      rating: 4,
-    },
-    {
-      id: "7",
-      code: "P007",
-      name: "Tablet",
-      description: "High-resolution tablet",
-      image: "tablet.jpg",
-      price: 600,
-      category: "Electronics",
-      quantity: 12,
-      inventoryStatus: "INSTOCK",
-      rating: 4,
-    },
-    {
-      id: "8",
-      code: "P008",
-      name: "Camera",
-      description: "DSLR camera",
-      image: "camera.jpg",
-      price: 1500,
-      category: "Electronics",
-      quantity: 5,
-      inventoryStatus: "LOWSTOCK",
-      rating: 5,
-    },
-    {
-      id: "9",
-      code: "P009",
-      name: "Printer",
-      description: "All-in-one printer",
-      image: "printer.jpg",
-      price: 250,
-      category: "Office",
-      quantity: 18,
-      inventoryStatus: "INSTOCK",
-      rating: 3,
-    },
-    {
-      id: "10",
-      code: "P010",
-      name: "Desk Chair",
-      description: "Ergonomic desk chair",
-      image: "chair.jpg",
-      price: 180,
-      category: "Furniture",
-      quantity: 10,
-      inventoryStatus: "INSTOCK",
-      rating: 4,
-    },
-  ];
-
-  useEffect(() => {
-    // Simula la carga de datos
-    setProducts(mockProducts);
-  }, []);
+  // Filtrado de productos (ejemplo visual)
+  const filteredProducts = products.filter(p =>
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    p.code.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="flex">
-      {/* Sidebar fijo */}
+    <div className="flex min-h-screen bg-[#f3f3f3]">
+      {/* Sidebar */}
       <SidebarMenu onToggle={handleSidebarToggle} />
 
-      {/* Contenido principal */}
-      <div className={`flex-1 min-h-screen transition-all duration-300 ${isSidebarExpanded ? 'ml-48' : 'ml-16'
-        }`}>
+      {/* Main content */}
+      <div className={`flex-1 transition-all duration-300 ${isSidebarExpanded ? 'ml-48' : 'ml-16'}`}>
         {/* Header */}
-        <header className="m-8">
-          <h1 className="text-2xl font-bold">Bienvenido usuario</h1>
+        <header className="flex items-center justify-between px-10 py-7 bg-gradient-to-r from-[#0b4468] to-[#0072b1] rounded-b-3xl shadow-xl mb-8">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-white drop-shadow tracking-tight">
+              Dashboard de Distribuidores
+            </h1>
+            <span className="block text-[#de1c85] font-semibold mt-2">
+              Bienvenido, gestiona tus clientes y productos de manera eficiente
+            </span>
+          </div>
+          <div className="flex gap-4">
+            <button className="rounded-full p-3 bg-[#de1c85] text-white hover:bg-pink-600 shadow-md transition">
+              <FaBell className="w-6 h-6" />
+            </button>
+            <button className="rounded-full p-3 bg-white/90 text-[#0b4468] shadow-md border border-[#de1c85] hover:bg-[#de1c85] hover:text-white transition">
+              <FaUserFriends className="w-6 h-6" />
+            </button>
+          </div>
         </header>
 
-        {/* Contenido desplazable */}
-        <main className="p-4 space-y-8">
-          {/* Fila de módulos */}
-          <div className="grid grid-cols-2 gap-4">
-            {/* Módulo A */}
-            <div className="ModuloA h-64 bg-white shadow-md rounded-lg p-4 overflow-y-scroll">
-              <h2 className="text-xl font-semibold mb-4">Gestión de Productos</h2>
-              <DataTable value={products} tableStyle={{ minWidth: '20rem' }}>
-                <Column field="code" header="Code"></Column>
-                <Column field="name" header="Name"></Column>
-                <Column field="category" header="Category"></Column>
-                <Column field="quantity" header="Quantity"></Column>
+        {/* Main Grid */}
+        <main className="px-8 pb-12 space-y-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+            {/* Módulo de productos */}
+            <section className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition group relative">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-[#0072b1] flex items-center gap-2">
+                  <FaSearch className="text-[#de1c85]" />
+                  Gestión de Productos
+                </h2>
+                <input
+                  type="text"
+                  className="rounded-full px-4 py-2 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#de1c85] text-base transition w-48"
+                  placeholder="Buscar producto..."
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                />
+              </div>
+              <DataTable value={filteredProducts} tableStyle={{ minWidth: '20rem' }}>
+                <Column field="code" header="Code" />
+                <Column field="name" header="Name" />
+                <Column field="category" header="Category" />
+                <Column field="quantity" header="Quantity" />
               </DataTable>
-            </div>
+            </section>
 
-            {/* Módulo B */}
-            <div className="ModuloB h-auto bg-white shadow-md rounded-lg p-4">
-              <h2 className="text-xl font-semibold mb-4">Estadísticas</h2>
-              <p className='mb-4'>Aquí puedes agregar gráficos o estadísticas relacionadas con los productos.</p>
-              <Accordion activeIndex={0}>
-                <AccordionTab header="Header I">
-                  <p className="m-0">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                    commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            {/* Módulo de estadísticas */}
+            <section className="bg-white rounded-2xl shadow-xl p-6 flex flex-col hover:shadow-2xl transition group">
+              <h2 className="text-xl font-bold text-[#0072b1] flex items-center gap-2 mb-4">
+                <FaChartBar className="text-[#de1c85]" />
+                Estadísticas
+              </h2>
+              <div className="h-48 flex items-center justify-center bg-gradient-to-tr from-[#f3f3f3] to-white rounded-xl">
+                {/* Aquí puedes agregar tu gráfico */}
+                <span className="text-gray-400 italic">[Aquí va tu gráfica de ventas/productos]</span>
+              </div>
+              <Accordion activeIndex={0} className="mt-6">
+                <AccordionTab header="Resumen mensual">
+                  <p className="m-0 text-gray-600">
+                    Visualiza el resumen de ventas, clientes y desempeño del mes.
                   </p>
                 </AccordionTab>
-                <AccordionTab header="Header II">
-                  <p className="m-0">
-                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-                    quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas
-                    sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-                    Consectetur, adipisci velit, sed quia non numquam eius modi.
-                  </p>
-                </AccordionTab>
-                <AccordionTab header="Header III">
-                  <p className="m-0">
-                    At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti
-                    quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt
-                    mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
-                    Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+                <AccordionTab header="Comparativo anual">
+                  <p className="m-0 text-gray-600">
+                    Compara el rendimiento contra el año anterior.
                   </p>
                 </AccordionTab>
               </Accordion>
-            </div>
+            </section>
           </div>
 
-          {/* Otra fila de módulos */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="ModuloC bg-white shadow-md rounded-lg p-4">
-              <h2 className="text-xl font-semibold mb-4">Pendientes</h2>
-              <p>Lista de tareas o pendientes relacionados con la gestión de productos.</p>
-            </div>
+          {/* Segunda fila: pendientes y usuarios */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Pendientes */}
+            <section className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition">
+              <h2 className="text-xl font-bold text-[#0072b1] flex items-center gap-2 mb-4">
+                <FaTasks className="text-[#de1c85]" />
+                Pendientes
+              </h2>
+              <ul className="space-y-3">
+                <li className="flex items-center justify-between bg-[#f3f3f3] rounded-lg px-4 py-2 hover:bg-[#de1c85]/10 transition">
+                  <span className="font-medium text-gray-700">Validar nuevos prospectos</span>
+                  <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold">3</span>
+                </li>
+                <li className="flex items-center justify-between bg-[#f3f3f3] rounded-lg px-4 py-2 hover:bg-[#de1c85]/10 transition">
+                  <span className="font-medium text-gray-700">Documentación pendiente</span>
+                  <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold">2</span>
+                </li>
+                <li className="flex items-center justify-between bg-[#f3f3f3] rounded-lg px-4 py-2 hover:bg-[#de1c85]/10 transition">
+                  <span className="font-medium text-gray-700">Pedidos por facturar</span>
+                  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">1</span>
+                </li>
+              </ul>
+            </section>
 
-            <div className="ModuloD bg-white shadow-md rounded-lg p-4">
-              <h2 className="text-xl font-semibold mb-4">Usuarios</h2>
-              <p>Información sobre los usuarios que interactúan con el sistema.</p>
-            </div>
+            {/* Usuarios */}
+            <section className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition">
+              <h2 className="text-xl font-bold text-[#0072b1] flex items-center gap-2 mb-4">
+                <FaUserFriends className="text-[#de1c85]" />
+                Usuarios
+              </h2>
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-3">
+                  <img src="/images/user1.png" alt="User1" className="w-10 h-10 rounded-full border-2 border-[#de1c85]" />
+                  <div>
+                    <span className="font-semibold text-gray-700">Juan Pérez</span>
+                    <span className="block text-xs text-gray-500">Administrador</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <img src="/images/user2.png" alt="User2" className="w-10 h-10 rounded-full border-2 border-[#0072b1]" />
+                  <div>
+                    <span className="font-semibold text-gray-700">Ana López</span>
+                    <span className="block text-xs text-gray-500">Soporte</span>
+                  </div>
+                </div>
+                {/* Puedes agregar más usuarios aquí */}
+              </div>
+            </section>
           </div>
         </main>
       </div>

@@ -6,7 +6,7 @@ import { Tooltip } from 'primereact/tooltip';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 
-const idsClientes = [410, 428, 420, 168442]; // <-- Aquí pon los IDs reales que quieras mostrar, hasta 100
+const idsClientes = [158432, 428, 420, 168442, 14596, 4586]; // <-- Aquí pon los IDs reales que quieras mostrar, hasta 100
 
 const fetchCliente = async (id: number) => {
     const res = await fetch(`https://172.100.203.36:8000/genexxus/cliente/${id}`);
