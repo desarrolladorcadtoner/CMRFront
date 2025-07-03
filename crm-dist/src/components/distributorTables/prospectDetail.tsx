@@ -49,7 +49,7 @@ const Section: React.FC<SectionProps> = ({ title, fields }) => (
     </section>
 );
 
-const ProspectDetail: React.FC<{ idDistribuidor: number }> = ({ idDistribuidor }) => {
+const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor }) => {
     const [data, setData] = useState<DistribuidorData | null>(null);
     const [documentsDownloaded, setDocumentsDownloaded] = useState(false);
     const [limiteCredito, setLimiteCredito] = useState<number>(0);
@@ -59,7 +59,7 @@ const ProspectDetail: React.FC<{ idDistribuidor: number }> = ({ idDistribuidor }
     // --- Funciones de API ---
     const downloadDocuments = async () => {
         try {
-            const response = await fetch(`http://172.100.203.36:8001/register/documentos/${idDistribuidor}`);
+            const response = await fetch(`http://172.100.203.36:8001/register/documentos/rfc/${rfcDistribuidor}`);
             if (!response.ok) throw new Error('Error al descargar los documentos');
             const blob = await response.blob();
 
@@ -84,12 +84,12 @@ const ProspectDetail: React.FC<{ idDistribuidor: number }> = ({ idDistribuidor }
         }
     };
 
-    const confirmAction = async (idDistribuidor: number, accion: string) => {
+    const confirmAction = async (rfcDistribuidor: string, accion: string) => {
         try {
             const response = await fetch('http://172.100.203.36:8001/confirmacion/distribuidores/confirmar', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_distribuidor: idDistribuidor, accion }),
+                body: JSON.stringify({ rfc: rfcDistribuidor, accion }),
             });
             if (!response.ok) throw new Error('Error al confirmar la acción');
             const result = await response.json();
@@ -104,7 +104,7 @@ const ProspectDetail: React.FC<{ idDistribuidor: number }> = ({ idDistribuidor }
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://172.100.203.36:8001/register/distribuidor/${idDistribuidor}`);
+                const response = await fetch(`http://172.100.203.36:8001/register/distribuidor/rfc/${rfcDistribuidor}`);
                 if (!response.ok) throw new Error('Error al obtener los detalles del prospecto');
                 const result = await response.json();
                 setData(result);
@@ -113,12 +113,12 @@ const ProspectDetail: React.FC<{ idDistribuidor: number }> = ({ idDistribuidor }
             }
         };
         fetchData();
-    }, [idDistribuidor]);
+    }, [rfcDistribuidor]);
 
     if (!data) return <div className="p-20 flex justify-center"><span className="text-[#0072b1] text-xl">Cargando prospecto...</span></div>;
 
     const { RegisterSOne, RegisterSTwo, RegisterSThree } = data;
-
+    
     return (
         <div className="bg-[#f3f3f3] p-8 min-h-screen flex flex-col items-center">
             <div className="max-w-4xl w-full bg-white rounded-3xl shadow-2xl border border-[#eee] p-8 mb-8 animate-fadeIn">
@@ -128,7 +128,7 @@ const ProspectDetail: React.FC<{ idDistribuidor: number }> = ({ idDistribuidor }
                             Prospecto a Distribuidor
                         </h1>
                         <div className="flex items-center gap-3 mt-1">
-                            <span className="bg-[#de1c85] text-white px-4 py-1 rounded-full font-bold text-sm">ID: {idDistribuidor}</span>
+                            <span className="bg-[#de1c85] text-white px-4 py-1 rounded-full font-bold text-sm">RFC: {rfcDistribuidor}</span>
                             {documentsDownloaded ? (
                                 <span className="flex items-center text-green-700 text-sm font-bold gap-2">
                                     <FaCheckCircle className="text-lg" /> Documentos descargados
@@ -246,7 +246,7 @@ const ProspectDetail: React.FC<{ idDistribuidor: number }> = ({ idDistribuidor }
                     <div className="flex flex-wrap gap-6 mt-8 justify-end items-center">
                         <button
                             disabled={!documentsDownloaded}
-                            onClick={() => confirmAction(idDistribuidor, 'aceptar')}
+                            onClick={() => confirmAction(rfcDistribuidor, 'aceptar')}
                             className={`
                                 flex items-center gap-3 px-7 py-3 rounded-2xl font-bold
                                 text-white bg-gradient-to-r from-green-500 to-green-700

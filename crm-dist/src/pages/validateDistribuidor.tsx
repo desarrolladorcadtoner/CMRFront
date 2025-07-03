@@ -11,7 +11,7 @@ export default function ValidateDistribuidor() {
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
     const [isDetailEnabled, setIsDetailEnabled] = useState(false);
-    const [selectedIdDistribuidor, setSelectedIdDistribuidor] = useState<number | null>(null);
+    const [selectedRfcDistribuidor, setSelectedRfcDistribuidor] = useState<string | null>(null);
 
     const router = useRouter();
 
@@ -25,8 +25,9 @@ export default function ValidateDistribuidor() {
         setIsSidebarExpanded(isExpanded);
     };
 
-    const handleViewDetails = (idDistribuidor: number): void => {
-        setSelectedIdDistribuidor(idDistribuidor);
+    const handleViewDetails = (rfcDistribuidor: string): void => {
+        console.log(rfcDistribuidor);
+        setSelectedRfcDistribuidor(rfcDistribuidor);
         setIsDetailEnabled(true);
         setActiveIndex(1);
     };
@@ -76,7 +77,7 @@ export default function ValidateDistribuidor() {
                                 }
                                 disabled={!isDetailEnabled}
                             >
-                                <ProspectDetail idDistribuidor={selectedIdDistribuidor || 0} />
+                                <ProspectDetail rfcDistribuidor={selectedRfcDistribuidor || ""} />
                             </TabPanel>
                             <TabPanel
                                 header={

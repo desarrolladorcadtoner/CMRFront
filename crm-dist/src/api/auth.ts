@@ -20,7 +20,7 @@ export const login = async (usuario: string, password: string) => {
         console.log("Respuesta:", data.token); // Verifica el token recibido
 
         // Guardar el token en una cookie (esto debe hacerse desde el servidor para HttpOnly)
-        document.cookie = `token=${data.token}; path=/; max-age=900; SameSite=Strict`;
+        document.cookie = `token=${data.token}; path=/; max-age=5000; SameSite=Strict`;
 
         return data;
     } catch (error: any) {

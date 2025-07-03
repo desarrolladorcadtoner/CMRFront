@@ -37,7 +37,8 @@ const ProspectListTable = ({ onViewDetails }) => {
                     header="Acción"
                     body={(rowData) => (
                         <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                            onClick={() => onViewDetails(rowData.IdDistribuidor)}                        
+                            onClick={() =>{
+                                onViewDetails(rowData.RFC)}}                        
                         >
                             Ver Detalles
                         </button>
