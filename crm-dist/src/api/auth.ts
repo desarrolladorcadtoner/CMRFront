@@ -1,5 +1,5 @@
 export const login = async (usuario: string, password: string) => {
-    const API_URL = "http://172.100.203.36:8001/login/login";
+    const API_URL = "http://localhost:8001/login/login";
 
     try {
         const response = await fetch(API_URL, {

@@ -55,6 +55,8 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
     const [limiteCredito, setLimiteCredito] = useState<number>(0);
     const [diasCredito, setDiasCredito] = useState<number>(0);
     const [descuentoAutorizado, setDescuentoAutorizado] = useState<number>(0);
+    const [tiposCliente, setTiposCliente] = useState<{ TipoClienteId: number, Descripcion: string }[]>([]);
+    const [tipoClienteId, setTipoClienteId] = useState<number | null>(null);
 
     // --- Funciones de API ---
     const downloadDocuments = async () => {
@@ -84,12 +86,32 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
         }
     };
 
+    // --- API para los tipo cliente ---
+    useEffect(() => {
+        const fetchTiposCliente = async () => {
+            try {
+                const response = await fetch('http://172.100.203.36:8001/confirmacion/catalogo/tipo-cliente');
+                if (!response.ok) throw new Error('Error al cargar tipos de cliente');
+                const result = await response.json();
+                setTiposCliente(result);
+            } catch (error) {
+                console.error('Error fetching tipos cliente:', error);
+            }
+        };
+        fetchTiposCliente();
+    }, []);
+
+    // --- APi para enviar correo de confiramción
     const confirmAction = async (rfcDistribuidor: string, accion: string) => {
+        if (!tipoClienteId) {
+            alert('Selecciona un tipo de cliente antes de continuar.');
+            return;
+        }
         try {
             const response = await fetch('http://172.100.203.36:8001/confirmacion/distribuidores/confirmar', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ rfc: rfcDistribuidor, accion }),
+                body: JSON.stringify({ rfc: rfcDistribuidor, accion, tipo_cliente_id: tipoClienteId }),
             });
             if (!response.ok) throw new Error('Error al confirmar la acción');
             const result = await response.json();
@@ -123,23 +145,37 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
         <div className="bg-[#f3f3f3] p-8 min-h-screen flex flex-col items-center">
             <div className="max-w-4xl w-full bg-white rounded-3xl shadow-2xl border border-[#eee] p-8 mb-8 animate-fadeIn">
                 <header className="mb-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div>
+                    <div className="flex flex-col gap-2">
                         <h1 className="text-3xl md:text-4xl font-black text-[#0b4468] tracking-tight mb-2">
                             Prospecto a Distribuidor
                         </h1>
-                        <div className="flex items-center gap-3 mt-1">
-                            <span className="bg-[#de1c85] text-white px-4 py-1 rounded-full font-bold text-sm">RFC: {rfcDistribuidor}</span>
+                        <div className="flex flex-wrap items-center gap-2">
+                            {/* RFC */}
+                            <span className="bg-[#de1c85] text-white px-4 py-1 rounded-full font-bold text-sm shadow-sm">
+                                RFC: {rfcDistribuidor}
+                            </span>
+                            {/* Documentos */}
                             {documentsDownloaded ? (
-                                <span className="flex items-center text-green-700 text-sm font-bold gap-2">
+                                <span className="flex items-center text-green-700 text-sm font-bold gap-1 bg-green-100 px-3 py-1 rounded-full shadow-sm">
                                     <FaCheckCircle className="text-lg" /> Documentos descargados
                                 </span>
                             ) : (
-                                <span className="flex items-center text-gray-400 gap-2">
+                                <span className="flex items-center text-gray-500 text-sm font-bold gap-1 bg-gray-100 px-3 py-1 rounded-full shadow-sm">
                                     <FaTimesCircle className="text-lg" /> Documentos pendientes
+                                </span>
+                            )}
+                            {/* Status */}
+                            {RegisterSOne?.Status && (
+                                <span className="flex items-center font-bold text-sm bg-yellow-200 text-yellow-900 px-3 py-1 rounded-full shadow-sm border border-yellow-400">
+                                    <svg className="w-3.5 h-3.5 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <circle cx="10" cy="10" r="10" />
+                                    </svg>
+                                    {RegisterSOne.Status.trim()}
                                 </span>
                             )}
                         </div>
                     </div>
+
                     <Button
                         label="Descargar Documentos"
                         icon={<FaDownload className="mr-2" />}
@@ -149,6 +185,7 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
                     />
                 </header>
 
+                
                 <div className="overflow-auto  pr-2">
                     {/* Info Fiscal */}
                     <Section
@@ -242,10 +279,28 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
                         ]}
                     />
 
+                    {/*Selección de tipo de cliente */}
+                    <div className="my-8 flex items-center gap-4">
+                        <label htmlFor="tipoClienteSelect" className="font-semibold text-[#0b4468]">Tipo de Cliente:</label>
+                        <select
+                            id="tipoClienteSelect"
+                            value={tipoClienteId ?? ""}
+                            onChange={e => setTipoClienteId(Number(e.target.value))}
+                            className="p-2 border rounded-lg bg-[#f6faff] text-gray-700 font-medium min-w-[180px]"
+                        >
+                            <option value="">Seleccione tipo de cliente</option>
+                            {tiposCliente.map(tc => (
+                                <option key={tc.TipoClienteId} value={tc.TipoClienteId}>
+                                    {tc.Descripcion}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
                     {/* --- Acciones --- */}
-                    <div className="flex flex-wrap gap-6 mt-8 justify-end items-center">
+                    <div className="flex flex-wrap gap-6 mt-8 justify-end items-center overflow-hidden">
                         <button
-                            disabled={!documentsDownloaded}
+                            disabled={!documentsDownloaded || !tipoClienteId}
                             onClick={() => confirmAction(rfcDistribuidor, 'aceptar')}
                             className={`
                                 flex items-center gap-3 px-7 py-3 rounded-2xl font-bold
@@ -253,7 +308,7 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
                                 shadow-xl transition-all duration-200
                                 hover:scale-105 hover:shadow-2xl hover:from-green-600 hover:to-green-900
                                 active:scale-100 disabled:opacity-60 disabled:cursor-not-allowed
-                                focus:outline-none focus:ring-2 focus:ring-green-300
+                                focus:outline-none focus:ring-2 focus:ring-green-300 z-40
                                 `}
                             style={{
                                 boxShadow: "0 6px 28px #22c55e40, 0 2px 8px #0b446820"
@@ -272,7 +327,7 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
                                 shadow-xl transition-all duration-200
                                 hover:scale-105 hover:shadow-2xl hover:from-[#d20070] hover:to-[#850c48]
                                 active:scale-100 disabled:opacity-60 disabled:cursor-not-allowed
-                                focus:outline-none focus:ring-2 focus:ring-pink-300
+                                focus:outline-none focus:ring-2 focus:ring-pink-300 overflow-hidden
                                 `}
                             style={{
                                 boxShadow: "0 6px 28px #de1c8540, 0 2px 8px #0b446820"
@@ -282,7 +337,11 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
                             <span>Denegar Solicitud</span>
                         </button>
                     </div>
+
+                    
                 </div>
+
+
             </div>
         </div>
     );
