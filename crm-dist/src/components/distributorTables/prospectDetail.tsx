@@ -61,7 +61,7 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
     // --- Funciones de API ---
     const downloadDocuments = async () => {
         try {
-            const response = await fetch(`http://172.100.203.36:8001/register/documentos/rfc/${rfcDistribuidor}`);
+            const response = await fetch(`http://172.100.203.202:8001/prospecto/documentos/rfc/${rfcDistribuidor}`);
             if (!response.ok) throw new Error('Error al descargar los documentos');
             const blob = await response.blob();
 
@@ -90,7 +90,7 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
     useEffect(() => {
         const fetchTiposCliente = async () => {
             try {
-                const response = await fetch('http://172.100.203.36:8001/confirmacion/catalogo/tipo-cliente');
+                const response = await fetch('http://172.100.203.202:8001/confirmacion/catalogo/tipo-cliente');
                 if (!response.ok) throw new Error('Error al cargar tipos de cliente');
                 const result = await response.json();
                 setTiposCliente(result);
@@ -108,7 +108,7 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
             return;
         }
         try {
-            const response = await fetch('http://172.100.203.36:8001/confirmacion/distribuidores/confirmar', {
+            const response = await fetch('http://172.100.203.202:8001/confirmacion/distribuidores/confirmar', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ rfc: rfcDistribuidor, accion, tipo_cliente_id: tipoClienteId }),
@@ -126,7 +126,7 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://172.100.203.36:8001/register/distribuidor/rfc/${rfcDistribuidor}`);
+                const response = await fetch(`http://172.100.203.202:8001/prospecto/distribuidor/rfc/${rfcDistribuidor}`);
                 if (!response.ok) throw new Error('Error al obtener los detalles del prospecto');
                 const result = await response.json();
                 setData(result);
@@ -140,7 +140,7 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
     if (!data) return <div className="p-20 flex justify-center"><span className="text-[#0072b1] text-xl">Cargando prospecto...</span></div>;
 
     const { RegisterSOne, RegisterSTwo, RegisterSThree } = data;
-    
+
     return (
         <div className="bg-[#f3f3f3] p-8 min-h-screen flex flex-col items-center">
             <div className="max-w-4xl w-full bg-white rounded-3xl shadow-2xl border border-[#eee] p-8 mb-8 animate-fadeIn">
@@ -185,7 +185,7 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
                     />
                 </header>
 
-                
+
                 <div className="overflow-auto  pr-2">
                     {/* Info Fiscal */}
                     <Section
@@ -338,7 +338,7 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
                         </button>
                     </div>
 
-                    
+
                 </div>
 
 
