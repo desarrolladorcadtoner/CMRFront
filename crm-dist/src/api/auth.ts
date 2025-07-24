@@ -12,12 +12,12 @@ export const login = async (usuario: string, password: string) => {
 
         if (!response.ok) {
             const errorData = await response.json();
-            console.error("Error del servidor:", errorData);
+            //console.error("Error del servidor:", errorData);
             throw new Error(errorData.message || "Error al iniciar sesión");
         }
 
         const data = await response.json();
-        console.log("Respuesta:", data.token); // Verifica el token recibido
+        //console.log("Respuesta:", data.token); // Verifica el token recibido
 
         // Guardar el token en una cookie (esto debe hacerse desde el servidor para HttpOnly)
         document.cookie = `token=${data.token}; path=/; max-age=5000; SameSite=Strict`;
