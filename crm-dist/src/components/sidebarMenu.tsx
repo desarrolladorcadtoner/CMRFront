@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useRouter } from "next/router";
-import { logout } from "@/api/auth";
+import { useAuth } from "@/context/authContext";
 import Image from "next/image";
 
 interface SidebarMenuProps {
@@ -10,6 +10,7 @@ interface SidebarMenuProps {
 const SidebarMenu: React.FC<SidebarMenuProps> = ({ onToggle }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const router = useRouter();
+    const { logout } = useAuth();
 
     //función para expandir el sidebar
     const toggleSidebar = () => {

@@ -3,7 +3,7 @@ import SidebarMenu from "@/components/sidebarMenu";
 import Image from "next/image";
 import { Button } from "primereact/button";
 import { useRouter } from "next/router";
-import { isAuthenticated } from "@/utils/auth";
+import { useAuth } from "@/context/authContext";
 
 export default function Login() {
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -16,12 +16,13 @@ export default function Login() {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const router = useRouter();
+    const {isAuthenticated} = useAuth();
 
-    useEffect(() => {
-        if (!isAuthenticated()) {
+    /*useEffect(() => {
+        if (!isAuthenticated) {
             router.push("/login"); // Redirigir al login si no está autenticado
         }
-    }, []);
+    }, [isAuthenticated]);*/
 
     const handleSidebarToggle = (isExpanded: boolean) => {
         setIsSidebarExpanded(isExpanded);
@@ -32,7 +33,7 @@ export default function Login() {
         setFormData((prev) => ({ ...prev, [id]: value }));
     };
 
-    const handleSubmit = async () => {
+   /*const handleSubmit = async () => {
         setError(null);
         setSuccess(null);
 
@@ -55,7 +56,7 @@ export default function Login() {
         } catch (err: any) {
             setError(err.message);
         }
-    };
+    };*/
 
     return (
         <>
@@ -63,7 +64,7 @@ export default function Login() {
             {/* Div background con posición absoluta */}
 
             <div className="container min-w-screen min-h-screen flexjustify-center items-center bg-cyan-50 flex flex-col justify-center items-center">
-                
+
                 {/*<Image
                     src="/images/Background_cadToner.png"
                     alt="Background"
@@ -121,7 +122,7 @@ export default function Login() {
                             {error && <p className="text-red-500 mt-4">{error}</p>}
                             {success && <p className="text-green-500 mt-4">{success}</p>}
 
-                            <Button style={{ marginTop: '2rem' }} label="Create User" onClick={handleSubmit} />
+                            <Button style={{ marginTop: '2rem' }} label="Create User" /*onClick={handleSubmit} *//>
                         </div>
 
                     </div>

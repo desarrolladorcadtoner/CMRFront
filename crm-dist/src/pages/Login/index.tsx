@@ -1,34 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Button } from "primereact/button";
-import { login } from "@/api/auth";
+import { useAuth } from "@/context/authContext";
 
 export default function Login() {
   const [usuario, setUsuario] = useState<string>(""); // Cambiar a string
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  
+  const { login } = useAuth();
+
 
   const handleLogin = async () => {
-    if (!usuario || !password) {
-      setError("Por favor, ingresa tu usuario y contraseña.");
-      return;
-    }
-
     try {
-      setError(null); // Limpiar errores previos
-      //console.log("Enviando datos:", { usuario, password });
-      const response = await login(usuario, password);
-      console.log("Respuesta del servidor:", response);
-
-      // Redirigir al home
-      console.log("Redirigiendo a /home...");
-      router.push("/home");
+      await login(usuario, password);
     } catch (err: any) {
-      console.error("Error al iniciar sesión:", err);
-      setError(err.message);
+      setError(err.message || "Error al iniciar sesión");
     }
   };
 
@@ -82,8 +70,8 @@ export default function Login() {
               />
               <a href="/forgottenPassword" className="ml-24 text-xs text-cyan-400 underline">Olvidaste tu contraseña?</a>
             </div>
-            
-            
+
+
             <Button label="Login" onClick={handleLogin} /> {/*onClick={handleLogin}*/}
           </div>
         </div>

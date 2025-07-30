@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import SidebarMenu from "@/components/sidebarMenu";
-import { isAuthenticated } from "@/utils/auth";
+import { useAuth } from "@/context/authContext";
 import { useRouter } from "next/router";
 
 export default function Statistics() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    //router.push("/login"); 
-    if (!isAuthenticated()) {
-      router.push("/login"); // Redirigir al login si no está autenticado
+    if (!isAuthenticated) {
+      router.push("/login");
     }
-  }, []);
+  }, [isAuthenticated]);
 
   const handleSidebarToggle = (isExpanded: boolean) => {
     setIsSidebarExpanded(isExpanded);

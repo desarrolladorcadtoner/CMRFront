@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from "next/router";
-import { isAuthenticated } from "@/utils/auth";
+import { useAuth } from "@/context/authContext";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import SidebarMenu from "@/components/sidebarMenu";
@@ -25,10 +25,13 @@ export default function IndexV2() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [search, setSearch] = useState('');
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    if (!isAuthenticated()) router.push("/login");
-  }, []);
+  /*useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login");
+    }
+  }, [isAuthenticated]);*/
 
   // Datos simulados
   useEffect(() => {

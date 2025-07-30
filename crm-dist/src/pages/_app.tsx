@@ -4,6 +4,7 @@ import { PrimeReactProvider, PrimeReactContext, AppendToType } from 'primereact/
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import 'primereact/resources/primereact.min.css'; // Estilos base de PrimeReact
 import 'primeicons/primeicons.css';
+import { AuthProvider } from "@/context/authContext";
 import type { AppProps } from "next/app";
 
 export default function MyApp({ Component }: AppProps) {
@@ -13,8 +14,11 @@ export default function MyApp({ Component }: AppProps) {
     };
 
     return (
-        <PrimeReactProvider value={value}>
-            <Component />
-        </PrimeReactProvider>
+        <AuthProvider>
+            <PrimeReactProvider value={value}>
+                <Component />
+            </PrimeReactProvider>
+        </AuthProvider>
+        
     );
 }

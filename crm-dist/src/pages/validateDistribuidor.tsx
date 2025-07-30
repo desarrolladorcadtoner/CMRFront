@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { isAuthenticated } from "@/utils/auth";
+import { useAuth } from "@/context/authContext";
 import { useRouter } from "next/router";
 import { TabView, TabPanel } from 'primereact/tabview';
 import { ProspectDetail, ProspectListTable, AcceptedProspectsTable, DeclinedProspectsTable } from '@/components/distributorTables/';
@@ -12,14 +12,15 @@ export default function ValidateDistribuidor() {
     const [activeIndex, setActiveIndex] = useState(0);
     const [isDetailEnabled, setIsDetailEnabled] = useState(false);
     const [selectedRfcDistribuidor, setSelectedRfcDistribuidor] = useState<string | null>(null);
+    const { isAuthenticated } = useAuth();
 
     const router = useRouter();
 
-    useEffect(() => {
-        if (!isAuthenticated()) {
+    /*useEffect(() => {
+        if (isAuthenticated === false) {
             router.push("/login");
         }
-    }, []);
+    }, [isAuthenticated]);*/
 
     const handleSidebarToggle = (isExpanded: boolean) => {
         setIsSidebarExpanded(isExpanded);
