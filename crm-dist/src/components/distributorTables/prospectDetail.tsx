@@ -51,15 +51,23 @@ const Section: React.FC<SectionProps> = ({ title, fields }) => (
 
 const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor }) => {
     const [data, setData] = useState<DistribuidorData | null>(null);
-    const [documentsDownloaded, setDocumentsDownloaded] = useState(false);
+    const [documentsDownloaded, setDocumentsDownloaded] = useState(false); // cambiar a false cuando se termine la prueba
     const [limiteCredito, setLimiteCredito] = useState<number>(0);
     const [diasCredito, setDiasCredito] = useState<number>(0);
-    const [descuentoAutorizado, setDescuentoAutorizado] = useState<number>(0);
+    const [descuentoAutorizado, setDescuentoAutorizado] = useState(0);
+    const [desTinGra, setDesTinGra] = useState(0);
+    const [desInsTon, setDesInsTon] = useState(0);
+    const [desInsTin, setDesInsTin] = useState(0);
+    const [desCarTon, setDesCarTon] = useState(0);
+    const [desCarTin, setDesCarTin] = useState(0);
+    const [preconfirmado, setPreconfirmado] = useState(false);
+    const [tiposCliente, setTiposCliente] = useState<{ TipoClienteId: number, Descripcion: string }[]>([]);
+    const [tipoClienteId, setTipoClienteId] = useState<number | null>(null);
 
     // --- Funciones de API ---
     const downloadDocuments = async () => {
         try {
-            const response = await fetch(`http://172.100.203.36:8001/register/documentos/rfc/${rfcDistribuidor}`);
+            const response = await fetch(`http://172.100.203.202:8001/prospecto/documentos/rfc/${rfcDistribuidor}`);
             if (!response.ok) throw new Error('Error al descargar los documentos');
             const blob = await response.blob();
 
@@ -84,15 +92,36 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
         }
     };
 
+    // --- API para los tipo cliente ---
+    useEffect(() => {
+        const fetchTiposCliente = async () => {
+            try {
+                const response = await fetch('http://172.100.203.202:8001/confirmacion/catalogo/tipo-cliente');
+                if (!response.ok) throw new Error('Error al cargar tipos de cliente');
+                const result = await response.json();
+                setTiposCliente(result);
+            } catch (error) {
+                console.error('Error fetching tipos cliente:', error);
+            }
+        };
+        fetchTiposCliente();
+    }, []);
+
+    // --- APi para enviar correo de confiramción
     const confirmAction = async (rfcDistribuidor: string, accion: string) => {
+        if (!tipoClienteId) {
+            alert('Selecciona un tipo de cliente antes de continuar.');
+            return;
+        }
+
         try {
-            const response = await fetch('http://172.100.203.36:8001/confirmacion/distribuidores/confirmar', {
+            const response = await fetch('http://172.100.203.202:8001/confirmacion/distribuidores/confirmar', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ rfc: rfcDistribuidor, accion }),
+                body: JSON.stringify({ rfc: rfcDistribuidor, accion, tipo_cliente_id: tipoClienteId }),
             });
             if (!response.ok) throw new Error('Error al confirmar la acción');
-            const result = await response.json();
+            /*const result =*/ await response.json();
             alert('La solicitud ha sido aceptada exitosamente.');
         } catch (error) {
             console.error('Error al confirmar la acción:', error);
@@ -100,11 +129,47 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
         }
     };
 
+    // --- Api para enviar la informacion del prospecto antes de confirmarla --- //
+    const preconfirmarProspecto = async () => {
+        if (!tipoClienteId) {
+            alert('Selecciona un tipo de cliente antes de continuar.');
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://172.100.203.202:8001/prospecto/sendData/${rfcDistribuidor}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tipoClienteId,
+                    creditos: {
+                        LimiteCredito: limiteCredito,
+                        DiasCredito: diasCredito,
+                        DescuentoAutorizado: descuentoAutorizado,
+                        Des_TinGra: desTinGra,
+                        Des_InsTon: desInsTon,
+                        Des_InsTin: desInsTin,
+                        Des_CarTon: desCarTon,
+                        Des_CarTin: desCarTin
+                    }
+                })
+            });
+
+            if (!response.ok) throw new Error('Error al enviar datos del prospecto');
+            
+            setPreconfirmado(true);
+            alert('✅ Datos del prospecto enviados correctamente para revisión.');
+        } catch (error) {
+            console.error('Error al enviar datos del prospecto:', error);
+            alert('❌ Hubo un error al enviar los datos del prospecto.');
+        }
+    };
+
     // --- Cargar datos ---
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://172.100.203.36:8001/register/distribuidor/rfc/${rfcDistribuidor}`);
+                const response = await fetch(`http://172.100.203.202:8001/prospecto/distribuidor/rfc/${rfcDistribuidor}`);
                 if (!response.ok) throw new Error('Error al obtener los detalles del prospecto');
                 const result = await response.json();
                 setData(result);
@@ -118,28 +183,44 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
     if (!data) return <div className="p-20 flex justify-center"><span className="text-[#0072b1] text-xl">Cargando prospecto...</span></div>;
 
     const { RegisterSOne, RegisterSTwo, RegisterSThree } = data;
-    
+
     return (
-        <div className="bg-[#f3f3f3] p-8 min-h-screen flex flex-col items-center">
+        <div className="p-8 min-h-screen flex flex-col items-center">
             <div className="max-w-4xl w-full bg-white rounded-3xl shadow-2xl border border-[#eee] p-8 mb-8 animate-fadeIn">
                 <header className="mb-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div>
+                    <div className="flex flex-col gap-2">
                         <h1 className="text-3xl md:text-4xl font-black text-[#0b4468] tracking-tight mb-2">
                             Prospecto a Distribuidor
                         </h1>
-                        <div className="flex items-center gap-3 mt-1">
-                            <span className="bg-[#de1c85] text-white px-4 py-1 rounded-full font-bold text-sm">RFC: {rfcDistribuidor}</span>
+                        <div className="flex flex-wrap items-center gap-2">
+                            {/* RFC */}
+                            <span className="bg-[#de1c85] text-white px-4 py-1 rounded-full font-bold text-sm shadow-sm">
+                                RFC: {rfcDistribuidor}
+                            </span>
+                            
+                            {/* Documentos */}
                             {documentsDownloaded ? (
-                                <span className="flex items-center text-green-700 text-sm font-bold gap-2">
+                                <span className="flex items-center text-green-700 text-sm font-bold gap-1 bg-green-100 px-3 py-1 rounded-full shadow-sm">
                                     <FaCheckCircle className="text-lg" /> Documentos descargados
                                 </span>
                             ) : (
-                                <span className="flex items-center text-gray-400 gap-2">
+                                <span className="flex items-center text-gray-500 text-sm font-bold gap-1 bg-gray-100 px-3 py-1 rounded-full shadow-sm">
                                     <FaTimesCircle className="text-lg" /> Documentos pendientes
+                                </span>
+                            )}
+
+                            {/* Status */}
+                            {RegisterSOne?.Status && (
+                                <span className="flex items-center font-bold text-sm bg-yellow-200 text-yellow-900 px-3 py-1 rounded-full shadow-sm border border-yellow-400">
+                                    <svg className="w-3.5 h-3.5 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <circle cx="10" cy="10" r="10" />
+                                    </svg>
+                                    {RegisterSOne.Status.trim()}
                                 </span>
                             )}
                         </div>
                     </div>
+
                     <Button
                         label="Descargar Documentos"
                         icon={<FaDownload className="mr-2" />}
@@ -239,28 +320,51 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
                             { label: "Límite de crédito", value: limiteCredito, onChange: v => setLimiteCredito(v ?? 0), prefix: "$" },
                             { label: "Días de crédito", value: diasCredito, onChange: v => setDiasCredito(v ?? 0) },
                             { label: "Descuento Autorizado", value: descuentoAutorizado, onChange: v => setDescuentoAutorizado(v ?? 0), suffix: "%" },
+                            { label: "Descuento Tinta Granel", value: desTinGra, onChange: v => setDesTinGra(v ?? 0), suffix: "%" },
+                            { label: "Descuento Insumos Toner", value: desInsTon, onChange: v => setDesInsTon(v ?? 0), suffix: "%" },
+                            { label: "Descuento Insumos Tinta", value: desInsTin, onChange: v => setDesInsTin(v ?? 0), suffix: "%" },
+                            { label: "Descuento Cartuchos Toner", value: desCarTon, onChange: v => setDesCarTon(v ?? 0), suffix: "%" },
+                            { label: "Descuento Cartuchos Tinta", value: desCarTin, onChange: v => setDesCarTin(v ?? 0), suffix: "%" },
                         ]}
                     />
 
+                    {/*Selección de tipo de cliente */}
+                    <div className="my-8 flex items-center gap-4">
+                        <label htmlFor="tipoClienteSelect" className="font-semibold text-[#0b4468]">Tipo de Cliente:</label>
+                        <select
+                            id="tipoClienteSelect"
+                            value={tipoClienteId ?? ""}
+                            onChange={e => setTipoClienteId(Number(e.target.value))}
+                            className="p-2 border rounded-lg bg-[#f6faff] text-gray-700 font-medium min-w-[180px]"
+                        >
+                            <option value="">Seleccione tipo de cliente</option>
+                            {tiposCliente.map(tc => (
+                                <option key={tc.TipoClienteId} value={tc.TipoClienteId}>
+                                    {tc.Descripcion}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
                     {/* --- Acciones --- */}
-                    <div className="flex flex-wrap gap-6 mt-8 justify-end items-center">
+                    <div className="flex flex-wrap gap-6 mt-8 justify-end items-center overflow-hidden">
                         <button
-                            disabled={!documentsDownloaded}
-                            onClick={() => confirmAction(rfcDistribuidor, 'aceptar')}
+                            disabled={!documentsDownloaded || !tipoClienteId || preconfirmado}
+                            onClick={preconfirmarProspecto}
                             className={`
                                 flex items-center gap-3 px-7 py-3 rounded-2xl font-bold
-                                text-white bg-gradient-to-r from-green-500 to-green-700
+                                text-white bg-gradient-to-r from-blue-500 to-blue-700
                                 shadow-xl transition-all duration-200
-                                hover:scale-105 hover:shadow-2xl hover:from-green-600 hover:to-green-900
+                                hover:scale-105 hover:shadow-2xl hover:from-blue-600 hover:to-blue-900
                                 active:scale-100 disabled:opacity-60 disabled:cursor-not-allowed
-                                focus:outline-none focus:ring-2 focus:ring-green-300
-                                `}
+                                focus:outline-none focus:ring-2 focus:ring-blue-300
+                            `}
                             style={{
-                                boxShadow: "0 6px 28px #22c55e40, 0 2px 8px #0b446820"
+                                boxShadow: "0 6px 28px #3b82f640, 0 2px 8px #0b446820"
                             }}
                         >
-                            <FaUserCheck className="text-2xl" />
-                            <span>Aceptar Solicitud</span>
+                            <FaCheckCircle className="text-2xl" />
+                            <span>Enviar para revisión</span>
                         </button>
 
                         <button
@@ -272,7 +376,7 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
                                 shadow-xl transition-all duration-200
                                 hover:scale-105 hover:shadow-2xl hover:from-[#d20070] hover:to-[#850c48]
                                 active:scale-100 disabled:opacity-60 disabled:cursor-not-allowed
-                                focus:outline-none focus:ring-2 focus:ring-pink-300
+                                focus:outline-none focus:ring-2 focus:ring-pink-300 overflow-hidden
                                 `}
                             style={{
                                 boxShadow: "0 6px 28px #de1c8540, 0 2px 8px #0b446820"
@@ -282,7 +386,11 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
                             <span>Denegar Solicitud</span>
                         </button>
                     </div>
+
+
                 </div>
+
+
             </div>
         </div>
     );

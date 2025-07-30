@@ -8,7 +8,7 @@ const ProspectListTable = ({ onViewDetails }) => {
     useEffect(() => {
         const fetchProspects = async () => {
             try {
-                const response = await fetch('http://172.100.203.36:8001/register/distribuidores/prospectosdist');
+                const response = await fetch('http://172.100.203.202:8001/prospecto/distribuidores/prospectosdist');
                 if (!response.ok) {
                     throw new Error('Error al obtener los prospectos');
                 }

@@ -20,17 +20,18 @@ export const SectionEditable: React.FC<SectionEditableProps> = ({ title, fields 
         <h2 className="text-2xl md:text-3xl font-bold text-[#0b4468] mb-8 border-b-2 border-[#de1c85] pb-2 tracking-tight">
             {title}
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
             {fields.map((field, idx) => (
                 <div
                     key={idx}
-                    className="flex flex-row items-center gap-4 bg-[#f3f3f3] hover:bg-[#fff6fb] rounded-2xl px-6 py-4 shadow-sm transition-all duration-200 border border-transparent hover:border-[#de1c85]"
+                    className="flex flex-row items-center gap-4 bg-[#f3f3f3] hover:bg-[#fff6fb] rounded-2xl px-6 py-4 shadow-sm 
+                    transition-all duration-200 border border-transparent hover:border-[#de1c85]"
                 >
                     {field.icon && (
                         <span className="text-[#de1c85] text-2xl">{field.icon}</span>
                     )}
-                    <label className="font-semibold text-gray-700 w-40 min-w-fit">
-                        {field.label}
+                    <label className="font-semibold text-gray-700 w-40 min-w-min">
+                        {field.label}:
                     </label>
                     <InputNumber
                         value={field.value}
