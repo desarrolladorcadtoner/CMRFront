@@ -24,14 +24,56 @@ export default function IndexV2() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [search, setSearch] = useState('');
-  const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const [totalProductos, setTotalProductos] = useState(0);
+  const [productosSinActualizar, setProductosSinActualizar] = useState(0);
+  const [productosNulos, setProductosNulos] = useState<{ [key: string]: number }>({});
+  const [prospectos, setProspectos] = useState({
+    total: 0,
+    aceptados: 0,
+    rechazados: 0,
+    pendientes: 0
+  });
+  const [distExistentes, setDistExistentes] = useState ({
+    total: 0,
+    migrados: 0,
+    pendientes:0
+  })
+  const noMigrados = distExistentes.total - distExistentes.migrados;
 
-  /*useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login");
+  useEffect(() => {
+  const fetchMetricas = async () => {
+    try {
+      const [totalRes, sinActualizarRes, refNullRes, imgNullRes, relNullRes, nameNullRes] = await Promise.all([
+        fetch("http://172.100.203.202:8001/dashboard/productos/total"),
+        fetch("http://172.100.203.202:8001/dashboard/productos/sin-actualizar"),
+        fetch("http://172.100.203.202:8001/dashboard/productos/nulos/ProductoReference"),
+        fetch("http://172.100.203.202:8001/dashboard/productos/nulos/ProductoLangImagen"),
+        fetch("http://172.100.203.202:8001/dashboard/productos/nulos/ProductoRelacionadoId"),
+        fetch("http://172.100.203.202:8001/dashboard/productos/nulos/ProductoLangName"),
+      ]);
+
+      const total = await totalRes.json();
+      const sinActualizar = await sinActualizarRes.json();
+      const refNull = await refNullRes.json();
+      const imgNull = await imgNullRes.json();
+      const relNull = await relNullRes.json();
+      const nameNull = await nameNullRes.json();
+
+      setTotalProductos(total.total || 0);
+      setProductosSinActualizar(sinActualizar.no_actualizados || 0);
+      setProductosNulos({
+        ProductoReference: refNull.nulos || 0,
+        ProductoLangImagen: imgNull.nulos || 0,
+        ProductoRelacionadoId: relNull.nulos || 0,
+        ProductoLangName: nameNull.nulos || 0,
+      });
+    } catch (err) {
+      console.error("Error al obtener métricas:", err);
     }
-  }, [isAuthenticated]);*/
+  };
+
+  fetchMetricas();
+}, []);
 
   // Datos simulados
   useEffect(() => {
@@ -39,6 +81,34 @@ export default function IndexV2() {
       // ... mismos datos mock que ya tienes
       // Agrega aquí los productos mock que ya tienes.
     ]);
+  }, []);
+
+  useEffect(() => {
+    const fetchProspectos = async () => {
+      try {
+        const res = await fetch("http://172.100.203.202:8001/dashboard/prospectos/resumen");
+        const data = await res.json();
+        setProspectos(data);
+      } catch (error) {
+        console.error("Error al obtener métricas de prospectos:", error);
+      }
+    };
+
+    fetchProspectos();
+  }, []);
+
+  useEffect(() => {
+    const fetchDistexistentes = async () => {
+      try {
+        const res = await fetch("http://172.100.203.202:8001/dashboard/distribuidores/existentes");
+        const data = await res.json();
+        setDistExistentes(data);
+      } catch (error) {
+        console.error("Error al obtener métricas de prospectos:", error);
+      }
+    };
+
+    fetchDistexistentes();
   }, []);
 
   const handleSidebarToggle = (isExpanded: boolean) => {
@@ -96,6 +166,36 @@ export default function IndexV2() {
                   onChange={e => setSearch(e.target.value)}
                 />
               </div>
+
+              {/* Métricas agrupadas */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                <div className="bg-[#f1f9ff] p-4 rounded-xl shadow-sm hover:shadow-md transition">
+                  <p className="text-sm text-gray-500">Total de productos</p>
+                  <p className="text-lg font-bold text-[#0072b1]">{totalProductos}</p>
+                </div>
+                <div className="bg-[#fff0f6] p-4 rounded-xl shadow-sm hover:shadow-md transition">
+                  <p className="text-sm text-gray-500">No actualizados (más de 1 año)</p>
+                  <p className="text-lg font-bold text-[#de1c85]">{productosSinActualizar}</p>
+                </div>
+                <div className="bg-[#fef9c3] p-4 rounded-xl shadow-sm hover:shadow-md transition">
+                  <p className="text-sm text-gray-500">Sin referencia</p>
+                  <p className="text-lg font-bold text-yellow-600">{productosNulos.ProductoReference}</p>
+                </div>
+                <div className="bg-[#e0f7fa] p-4 rounded-xl shadow-sm hover:shadow-md transition">
+                  <p className="text-sm text-gray-500">Sin imagen</p>
+                  <p className="text-lg font-bold text-cyan-600">{productosNulos.ProductoLangImagen}</p>
+                </div>
+                <div className="bg-[#ede7f6] p-4 rounded-xl shadow-sm hover:shadow-md transition">
+                  <p className="text-sm text-gray-500">Sin relacionados</p>
+                  <p className="text-lg font-bold text-indigo-600">{productosNulos.ProductoRelacionadoId}</p>
+                </div>
+                <div className="bg-[#f3e5f5] p-4 rounded-xl shadow-sm hover:shadow-md transition">
+                  <p className="text-sm text-gray-500">Sin nombre</p>
+                  <p className="text-lg font-bold text-purple-600">{productosNulos.ProductoLangName}</p>
+                </div>
+              </div>
+
+              {/* Tabla de resultados */}
               <DataTable value={filteredProducts} tableStyle={{ minWidth: '20rem' }}>
                 <Column field="code" header="Code" />
                 <Column field="name" header="Name" />
@@ -131,24 +231,50 @@ export default function IndexV2() {
 
           {/* Segunda fila: pendientes y usuarios */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Pendientes */}
+            {/* Prospectos Pendientes */}
             <section className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition">
               <h2 className="text-xl font-bold text-[#0072b1] flex items-center gap-2 mb-4">
                 <FaTasks className="text-[#de1c85]" />
-                Pendientes
+                Prospectos
               </h2>
               <ul className="space-y-3">
                 <li className="flex items-center justify-between bg-[#f3f3f3] rounded-lg px-4 py-2 hover:bg-[#de1c85]/10 transition">
-                  <span className="font-medium text-gray-700">Validar nuevos prospectos</span>
-                  <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold">3</span>
+                  <span className="font-medium text-gray-700">Total de prospectos</span>
+                  <span className="bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-xs font-bold">{prospectos.total}</span>
                 </li>
                 <li className="flex items-center justify-between bg-[#f3f3f3] rounded-lg px-4 py-2 hover:bg-[#de1c85]/10 transition">
-                  <span className="font-medium text-gray-700">Documentación pendiente</span>
-                  <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold">2</span>
+                  <span className="font-medium text-gray-700">Prospectos pendientes</span>
+                  <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold">{prospectos.pendientes}</span>
                 </li>
                 <li className="flex items-center justify-between bg-[#f3f3f3] rounded-lg px-4 py-2 hover:bg-[#de1c85]/10 transition">
-                  <span className="font-medium text-gray-700">Pedidos por facturar</span>
-                  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">1</span>
+                  <span className="font-medium text-gray-700">Prospectos aceptados</span>
+                  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">{prospectos.aceptados}</span>
+                </li>
+                <li className="flex items-center justify-between bg-[#f3f3f3] rounded-lg px-4 py-2 hover:bg-[#de1c85]/10 transition">
+                  <span className="font-medium text-gray-700">Prospectos rechazados</span>
+                  <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold">{prospectos.rechazados}</span>
+                </li>
+              </ul>
+            </section>
+
+            {/* Prospectos Pendientes */}
+            <section className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition">
+              <h2 className="text-xl font-bold text-[#0072b1] flex items-center gap-2 mb-4">
+                <FaTasks className="text-[#de1c85]" />
+                Distribuidores de Siscad
+              </h2>
+              <ul className="space-y-3">
+                <li className="flex items-center justify-between bg-[#f3f3f3] rounded-lg px-4 py-2 hover:bg-[#de1c85]/10 transition">
+                  <span className="font-medium text-gray-700">Total de Distribuidores</span>
+                  <span className="bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-xs font-bold">{distExistentes.total}</span>
+                </li>
+                <li className="flex items-center justify-between bg-[#f3f3f3] rounded-lg px-4 py-2 hover:bg-[#de1c85]/10 transition">
+                  <span className="font-medium text-gray-700">Distribuidores migrados</span>
+                  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">{distExistentes.migrados}</span>
+                </li>
+                <li className="flex items-center justify-between bg-[#f3f3f3] rounded-lg px-4 py-2 hover:bg-[#de1c85]/10 transition">
+                  <span className="font-medium text-gray-700">Distribuidores No migrados</span>
+                  <span className=" bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold">{noMigrados}</span>
                 </li>
               </ul>
             </section>
