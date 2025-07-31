@@ -5,7 +5,9 @@ import { Tooltip } from 'primereact/tooltip';
 import { InputNumber } from 'primereact/inputnumber';
 import { SectionEditable } from './CamposProspectoInfo/SectionEditable';
 import { FaDownload, FaFileAlt, FaUserCheck, FaUserTimes, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import axios from 'axios';
 
+//#region interfaces
 interface DistribuidorData {
     RegisterSOne: any;
     RegisterSTwo: any;
@@ -48,6 +50,7 @@ const Section: React.FC<SectionProps> = ({ title, fields }) => (
         </div>
     </section>
 );
+//#endregion
 
 const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor }) => {
     const [data, setData] = useState<DistribuidorData | null>(null);
@@ -115,17 +118,30 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
         }
 
         try {
-            const response = await fetch('http://172.100.203.202:8001/confirmacion/distribuidores/confirmar', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ rfc: rfcDistribuidor, accion, tipo_cliente_id: tipoClienteId }),
-            });
-            if (!response.ok) throw new Error('Error al confirmar la acción');
-            /*const result =*/ await response.json();
-            alert('La solicitud ha sido aceptada exitosamente.');
-        } catch (error) {
-            console.error('Error al confirmar la acción:', error);
-            alert('Hubo un error al aceptar la solicitud.');
+            const payload = {
+                rfc: rfcDistribuidor.toUpperCase(),
+                accion,
+                tipo_cliente_id: tipoClienteId,
+                creditos: {
+                    LimiteCredito: limiteCredito || 0,
+                    DiasCredito: diasCredito || 0,
+                    DescuentoAutorizado: descuentoAutorizado || 0,
+                    Des_TinGra: desTinGra ||0,
+                    Des_InsTon: desInsTon || 0,
+                    Des_InsTin: desInsTin || 0,
+                    Des_CarTon: desCarTon || 0,
+                    Des_CarTin: desCarTin
+                }
+            };
+
+            const response = await axios.post('http://172.100.203.202:8001/confirmacion/distribuidores/confirmar', payload);
+
+            alert('✅ La solicitud ha sido aceptada exitosamente.');
+            //console.log('Resultado:', response.data);
+        } catch (error: any) {
+            console.error('❌ Error al confirmar la acción:', error);
+            const msg = error.response?.data?.message || 'Hubo un error al aceptar la solicitud.';
+            alert(`❌ ${msg}`);
         }
     };
 
@@ -350,7 +366,7 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
                     <div className="flex flex-wrap gap-6 mt-8 justify-end items-center overflow-hidden">
                         <button
                             disabled={!documentsDownloaded || !tipoClienteId || preconfirmado}
-                            onClick={preconfirmarProspecto}
+                            onClick={() => confirmAction(rfcDistribuidor, "Aceptar")}
                             className={`
                                 flex items-center gap-3 px-7 py-3 rounded-2xl font-bold
                                 text-white bg-gradient-to-r from-blue-500 to-blue-700
@@ -364,7 +380,8 @@ const ProspectDetail: React.FC<{ rfcDistribuidor: string }> = ({ rfcDistribuidor
                             }}
                         >
                             <FaCheckCircle className="text-2xl" />
-                            <span>Enviar para revisión</span>
+                            <span>Confirmar Solicitud</span>
+                            {/*<span>Enviar para revisión</span>*/}
                         </button>
 
                         <button

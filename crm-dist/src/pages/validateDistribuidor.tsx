@@ -27,7 +27,7 @@ export default function ValidateDistribuidor() {
     };
 
     const handleViewDetails = (rfcDistribuidor: string): void => {
-        console.log(rfcDistribuidor);
+        //console.log(rfcDistribuidor);
         setSelectedRfcDistribuidor(rfcDistribuidor);
         setIsDetailEnabled(true);
         setActiveIndex(1);
