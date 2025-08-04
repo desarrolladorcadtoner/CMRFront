@@ -8,7 +8,8 @@ const ProspectListTable = ({ onViewDetails }) => {
     useEffect(() => {
         const fetchProspects = async () => {
             try {
-                const response = await fetch('http://172.100.203.202:8001/prospecto/distribuidores/prospectosdist');
+                //const response = await fetch('http://172.100.203.202:8001/prospecto/distribuidores/prospectosdist?status=Aceptado');
+                const response = await fetch('http://172.100.203.202:8001/prospecto/distribuidores/prospectosdist?status=Pendiente');
                 if (!response.ok) {
                     throw new Error('Error al obtener los prospectos');
                 }
@@ -21,6 +22,8 @@ const ProspectListTable = ({ onViewDetails }) => {
 
         fetchProspects();
     }, []);
+
+    console.log("Prospectos: ", prospects);
     
     return (
         <>
