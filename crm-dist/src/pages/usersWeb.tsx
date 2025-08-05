@@ -7,6 +7,7 @@ import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import axios from "axios";
+import { useRouter } from "next/router";
 
 //const idsClientes = [158432, 428, 420, 168442, 14596, 4586]; // <-- Aquí pon los IDs reales que quieras mostrar, hasta 100
 type Distribuidor = {
@@ -28,6 +29,7 @@ const UsersWeb = () => {
     const [filtroRFC, setFiltroRFC] = useState("");
     const [filtroIdDistribuidor, setFiltroIdDistribuidor] = useState("");
     const [filtroNombre, setFiltroNombre] = useState("");
+    const router = useRouter();
 
     useEffect(() => {
         fetchClientes();
@@ -80,7 +82,7 @@ const UsersWeb = () => {
             <Button
                 icon="pi pi-eye"
                 className="p-button-text p-button-rounded"
-                onClick={() => setSelectedCliente(rowData)}
+                onClick={() => router.push(`/dataClient/${rowData.IdDistribuidor}`)}
                 data-pr-tooltip="Ver detalles"
             />
             <Tooltip target=".p-button" />
