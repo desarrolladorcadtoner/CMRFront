@@ -18,3 +18,8 @@ export async function fetchProductosNulosPorColumna(columna) {
     //console.log('sina ctualizar: ', data)
     return data.total || 0;
 }
+
+export async function fetchProductosSinReferencias(){
+    const {data} = await axios.get(`${API_BASE}/sin-referencia`);
+    return data.total || 0;
+}

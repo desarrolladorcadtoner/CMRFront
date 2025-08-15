@@ -10,7 +10,8 @@ import axios from 'axios';
 import {
   fetchTotalProductos,
   fetchProductosSinActualizar,
-  fetchProductosNulosPorColumna
+  fetchProductosNulosPorColumna,
+  fetchProductosSinReferencias
 } from "../../utils/homeService";
 
 interface Product {
@@ -53,8 +54,8 @@ export default function IndexV2() {
         const sinActualizar = await fetchProductosSinActualizar();
         const refNull = await fetchProductosNulosPorColumna("ProductoReference");
         const imgNull = await fetchProductosNulosPorColumna("ProductoLangImagen");
-        const relNull = await fetchProductosNulosPorColumna("ProductoRelacionadoId");
-        const nameNull = await fetchProductosNulosPorColumna("ProductoLangName");
+        const relNull = await fetchProductosSinReferencias();
+        const nameNull = await fetchProductosNulosPorColumna("ProductoLangImagenNombre");
 
         setTotalProductos(total);
         setProductosSinActualizar(sinActualizar);
@@ -81,6 +82,7 @@ export default function IndexV2() {
     ]);
   }, []);
 
+  // Métricas de prospectos y distribuidores
   useEffect(() => {
     const fetchProspectos = async () => {
       try {
@@ -95,6 +97,7 @@ export default function IndexV2() {
     fetchProspectos();
   }, []);
 
+  // Métricas de distribuidores existentes
   useEffect(() => {
     const fetchDistexistentes = async () => {
       try {
@@ -193,13 +196,13 @@ export default function IndexV2() {
                 </div>
               </div>
 
-              {/* Tabla de resultados */}
+              {/* Tabla de resultados 
               <DataTable value={filteredProducts} tableStyle={{ minWidth: '20rem' }}>
                 <Column field="code" header="Code" />
                 <Column field="name" header="Name" />
                 <Column field="category" header="Category" />
                 <Column field="quantity" header="Quantity" />
-              </DataTable>
+              </DataTable>*/}
             </section>
 
             {/* Módulo de estadísticas */}
