@@ -6,6 +6,13 @@ import { Column } from 'primereact/column';
 import SidebarMenu from "@/components/sidebarMenu";
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { FaChartBar, FaTasks, FaUserFriends, FaSearch, FaBell } from "react-icons/fa";
+import axios from 'axios';
+import {
+  fetchTotalProductos,
+  fetchProductosSinActualizar,
+  fetchProductosNulosPorColumna,
+  fetchProductosSinReferencias
+} from "../../utils/homeService";
 
 interface Product {
   id: string;
@@ -41,41 +48,33 @@ export default function IndexV2() {
   const noMigrados = distExistentes.total - distExistentes.migrados;
 
   useEffect(() => {
-  const fetchMetricas = async () => {
-    try {
-      const [totalRes, sinActualizarRes, refNullRes, imgNullRes, relNullRes, nameNullRes] = await Promise.all([
-        fetch("http://172.100.203.202:8001/dashboard/productos/total"),
-        fetch("http://172.100.203.202:8001/dashboard/productos/sin-actualizar"),
-        fetch("http://172.100.203.202:8001/dashboard/productos/nulos/ProductoReference"),
-        fetch("http://172.100.203.202:8001/dashboard/productos/nulos/ProductoLangImagen"),
-        fetch("http://172.100.203.202:8001/dashboard/productos/nulos/ProductoRelacionadoId"),
-        fetch("http://172.100.203.202:8001/dashboard/productos/nulos/ProductoLangName"),
-      ]);
+    const cargarMetricas = async () => {
+      try {
+        const total = await fetchTotalProductos();
+        const sinActualizar = await fetchProductosSinActualizar();
+        const refNull = await fetchProductosNulosPorColumna("ProductoReference");
+        const imgNull = await fetchProductosNulosPorColumna("ProductoLangImagen");
+        const relNull = await fetchProductosSinReferencias();
+        const nameNull = await fetchProductosNulosPorColumna("ProductoLangImagenNombre");
 
-      const total = await totalRes.json();
-      const sinActualizar = await sinActualizarRes.json();
-      const refNull = await refNullRes.json();
-      const imgNull = await imgNullRes.json();
-      const relNull = await relNullRes.json();
-      const nameNull = await nameNullRes.json();
+        setTotalProductos(total);
+        setProductosSinActualizar(sinActualizar);
+        setProductosNulos({
+          ProductoReference: refNull,
+          ProductoLangImagen: imgNull,
+          ProductoRelacionadoId: relNull,
+          ProductoLangName: nameNull
+        });
+        console.log('Sin actualizar: ', sinActualizar);
+      } catch (error) {
+        console.error("❌ Error al cargar métricas desde homeService.js", error);
+      }
+    };
 
-      setTotalProductos(total.total || 0);
-      setProductosSinActualizar(sinActualizar.no_actualizados || 0);
-      setProductosNulos({
-        ProductoReference: refNull.nulos || 0,
-        ProductoLangImagen: imgNull.nulos || 0,
-        ProductoRelacionadoId: relNull.nulos || 0,
-        ProductoLangName: nameNull.nulos || 0,
-      });
-    } catch (err) {
-      console.error("Error al obtener métricas:", err);
-    }
-  };
+    cargarMetricas();
+  }, []);
 
-  fetchMetricas();
-}, []);
-
-  // Datos simulados
+  // Datos simulados Productos
   useEffect(() => {
     setProducts([
       // ... mismos datos mock que ya tienes
@@ -83,6 +82,7 @@ export default function IndexV2() {
     ]);
   }, []);
 
+  // Métricas de prospectos y distribuidores
   useEffect(() => {
     const fetchProspectos = async () => {
       try {
@@ -97,6 +97,7 @@ export default function IndexV2() {
     fetchProspectos();
   }, []);
 
+  // Métricas de distribuidores existentes
   useEffect(() => {
     const fetchDistexistentes = async () => {
       try {
@@ -195,13 +196,13 @@ export default function IndexV2() {
                 </div>
               </div>
 
-              {/* Tabla de resultados */}
+              {/* Tabla de resultados 
               <DataTable value={filteredProducts} tableStyle={{ minWidth: '20rem' }}>
                 <Column field="code" header="Code" />
                 <Column field="name" header="Name" />
                 <Column field="category" header="Category" />
                 <Column field="quantity" header="Quantity" />
-              </DataTable>
+              </DataTable>*/}
             </section>
 
             {/* Módulo de estadísticas */}

@@ -7,14 +7,29 @@ import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import axios from "axios";
+import { useRouter } from "next/router";
 
 //const idsClientes = [158432, 428, 420, 168442, 14596, 4586]; // <-- Aquí pon los IDs reales que quieras mostrar, hasta 100
+type Distribuidor = {
+    IdDistribuidor: number;
+    RFC: string;
+    RazonSocial: string;
+    CorreoFact: string;
+    TipoPersona: string;
+    Calle: string;
+    Colonia: string;
+    Municipio: string;
+    Estado: string;
+    CP: string;
+};
 
 const UsersWeb = () => {
     const [clientes, setClientes] = useState<any[]>([]);
     const [selectedCliente, setSelectedCliente] = useState<any | null>(null);
     const [filtroRFC, setFiltroRFC] = useState("");
+    const [filtroIdDistribuidor, setFiltroIdDistribuidor] = useState("");
     const [filtroNombre, setFiltroNombre] = useState("");
+    const router = useRouter();
 
     useEffect(() => {
         fetchClientes();
@@ -22,7 +37,7 @@ const UsersWeb = () => {
 
     const fetchClientes = async () => {
         try {
-            const response = await axios.get("http://172.100.203.202:8001/distribuidores/siscad/existentes");
+            const response = await axios.get<Distribuidor[]>("http://172.100.203.202:8001/distribuidores/siscad/existentes");
             setClientes(response.data);
         } catch (error) {
             console.error("❌ Error al obtener distribuidores:", error);
@@ -32,7 +47,17 @@ const UsersWeb = () => {
     // Buscar por RFC
     const buscarPorRFC = async () => {
         try {
-            const response = await axios.get(`http://172.100.203.202:8001/distribuidores/siscad/buscar/rfc/${filtroRFC}`);
+            const response = await axios.get<Distribuidor[]>(`http://172.100.203.202:8001/distribuidores/siscad/buscar/rfc/${filtroRFC}`);
+            setClientes([response.data[0]]);
+        } catch (error) {
+            console.error("❌ Error al buscar por RFC:", error);
+            setClientes([]);
+        }
+    };
+    
+    const buscarPorId = async () => {
+        try {
+            const response = await axios.get<Distribuidor[]>(`http://172.100.203.202:8001/distribuidores/siscad/buscar/id/${filtroIdDistribuidor}`);
             setClientes([response.data[0]]);
         } catch (error) {
             console.error("❌ Error al buscar por RFC:", error);
@@ -43,7 +68,7 @@ const UsersWeb = () => {
     // Buscar por Nombre
     const buscarPorNombre = async () => {
         try {
-            const response = await axios.get(`http://172.100.203.202:8001/distribuidores/siscad/buscar/nombre/${filtroNombre}`);
+            const response = await axios.get<Distribuidor[]>(`http://172.100.203.202:8001/distribuidores/siscad/buscar/nombre/${filtroNombre}`);
             setClientes(response.data);
         } catch (error) {
             console.error("❌ Error al buscar por nombre:", error);
@@ -57,7 +82,7 @@ const UsersWeb = () => {
             <Button
                 icon="pi pi-eye"
                 className="p-button-text p-button-rounded"
-                onClick={() => setSelectedCliente(rowData)}
+                onClick={() => router.push(`/dataClient/${rowData.IdDistribuidor}`)}
                 data-pr-tooltip="Ver detalles"
             />
             <Tooltip target=".p-button" />
@@ -70,7 +95,7 @@ const UsersWeb = () => {
             <div className="container min-w-screen min-h-screen bg-cyan-50 flex flex-col items-center py-10">
                 <h1 className="text-3xl font-bold mb-6">Distribuidores Existentes</h1>
 
-                <div className="flex flex-wrap gap-4 mb-6">
+                <div className="flex flex-wrap max-w-xl gap-2 mb-6">
                     <span className="p-input-icon-left">
                         {/*<i className="pi pi-search" />*/}
                         <InputText
@@ -80,6 +105,16 @@ const UsersWeb = () => {
                         />
                     </span>
                     <Button label="Buscar RFC" onClick={buscarPorRFC} className="p-button-sm" />
+
+                    <span className="p-input-icon-left">
+                        {/*<i className="pi pi-search" />*/}
+                        <InputText
+                            placeholder="Buscar por Id de distribuidor"
+                            value={filtroIdDistribuidor}
+                            onChange={e => setFiltroIdDistribuidor(e.target.value)}
+                        />
+                    </span>
+                    <Button label="Buscar Id Distribuidor" onClick={buscarPorId} className="p-button-sm" />
 
                     <span className="p-input-icon-left">
                         {/*<i className="pi pi-search" />*/}
@@ -97,6 +132,7 @@ const UsersWeb = () => {
                         className="p-button-secondary p-button-sm"
                         onClick={() => {
                             setFiltroRFC("");
+                            setFiltroIdDistribuidor("");
                             setFiltroNombre("");
                             fetchClientes(); // recarga todo
                         }}

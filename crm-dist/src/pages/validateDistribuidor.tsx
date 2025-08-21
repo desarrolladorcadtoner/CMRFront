@@ -12,7 +12,7 @@ export default function ValidateDistribuidor() {
     const [activeIndex, setActiveIndex] = useState(0);
     const [isDetailEnabled, setIsDetailEnabled] = useState(false);
     const [selectedRfcDistribuidor, setSelectedRfcDistribuidor] = useState<string | null>(null);
-    const { isAuthenticated } = useAuth();
+    //const { isAuthenticated } = useAuth();
 
     const router = useRouter();
 
@@ -27,7 +27,7 @@ export default function ValidateDistribuidor() {
     };
 
     const handleViewDetails = (rfcDistribuidor: string): void => {
-        console.log(rfcDistribuidor);
+        //console.log(rfcDistribuidor);
         setSelectedRfcDistribuidor(rfcDistribuidor);
         setIsDetailEnabled(true);
         setActiveIndex(1);
